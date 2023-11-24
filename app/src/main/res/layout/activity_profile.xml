@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/layout_profile_user" />
+
+        <LinearLayout
+            android:id="@+id/threeBtn"
+            style="@style/threeBtnlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="400dp"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/userBtn"
+                style="@style/threeBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="User"
+                android:textAllCaps="false"
+                tools:layout_editor_absoluteX="118dp"
+                tools:layout_editor_absoluteY="662dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/studentBtn"
+                style="@style/threeBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Student"
+                android:textAllCaps="false"
+                tools:layout_editor_absoluteX="223dp"
+                tools:layout_editor_absoluteY="662dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/profileBtn"
+                style="@style/threeBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Profile"
+                android:textAllCaps="false"
+                tools:layout_editor_absoluteX="311dp"
+                tools:layout_editor_absoluteY="662dp" />
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
