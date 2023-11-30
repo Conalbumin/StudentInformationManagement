@@ -45,7 +45,7 @@
         tools:ignore="HardcodedText" />
 
     <LinearLayout
-        android:id="@+id/email_layout"
+        android:id="@+id/id_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_fullName_TextView"
@@ -60,15 +60,15 @@
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/ic_mail" />
+            android:background="@drawable/ic_id" />
 
         <TextView
-            android:id="@+id/email"
+            android:id="@+id/id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Email"
+            android:text="ID"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -76,16 +76,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/age_layout"
+        android:id="@+id/gender_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/email_layout"
+        android:layout_below="@+id/id_layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:background="@drawable/frame">
 
         <ImageView
-            android:id="@+id/ic_age"
+            android:id="@+id/ic_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -94,12 +94,12 @@
             android:background="@drawable/ic_age" />
 
         <TextView
-            android:id="@+id/age"
+            android:id="@+id/gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Age"
+            android:text="Gender"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -107,30 +107,30 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/phone_layout"
+        android:id="@+id/date_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/age_layout"
+        android:layout_below="@+id/gender_layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:background="@drawable/frame">
 
         <ImageView
-            android:id="@+id/ic_phone"
+            android:id="@+id/ic_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/ic_phone" />
+            android:background="@drawable/ic_calender" />
 
         <TextView
-            android:id="@+id/phone"
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Phone"
+            android:text="Date"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -141,7 +141,7 @@
         android:id="@+id/cerfificate_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/phone_layout"
+        android:layout_below="@+id/date_layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:background="@drawable/frame">
@@ -164,30 +164,6 @@
             android:text="Certificates"
             android:textColor="@color/black"
             android:textSize="24sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/logout_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="25sp"
-        android:layout_marginBottom="60sp"
-        android:orientation="horizontal"
-        android:background="@drawable/logout_button">
-
-        <TextView
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="LOGOUT"
-            android:textColor="@color/white"
-            android:textSize="30sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
     </LinearLayout>

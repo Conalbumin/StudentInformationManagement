@@ -75,12 +75,9 @@ public class User {
     }
 
     public static ArrayList<User> getUsersList() {
-        // Replace this with your actual implementation to fetch the list of users
-        // For now, let's create a dummy list for demonstration purposes
         ArrayList<User> usersList = new ArrayList<>();
         usersList.add(new User("user1@example.com", "User One", 25, "123456789", true, "user"));
         usersList.add(new User("user2@example.com", "User Two", 30, "987654321", true, "admin"));
-        // Add more users as needed
 
         return usersList;
     }

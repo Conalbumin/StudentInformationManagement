@@ -3,39 +3,76 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/logoutButton"
-        android:orientation="horizontal">
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <SearchView
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            style="@style/layoutUser"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:queryHint="Search here"
-            android:iconifiedByDefault="false">
-        </SearchView>
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <SearchView
+                android:id="@+id/student_search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/frame"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Enter username" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            style="@style/logoutButton"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
 
-            <ImageView
-                android:id="@+id/ic_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/ic_filter" />
-
-            <Spinner
-                android:id="@+id/sort"
+            android:orientation="horizontal"
+            >
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dropdown"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:text="Sort name: Asc"
+                    android:textColor="@color/black"
+                    android:textAllCaps="false"
+                    android:background="@drawable/frame"
+                    android:gravity="center"
+                    android:id="@+id/btnSortByName"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/frame"
+                    android:text="Sort email: Asc"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:id="@+id/btnSortByEmail"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

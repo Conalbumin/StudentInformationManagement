@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/listStudent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ic_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="370dp"
+        android:layout_marginTop="10dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+    <!-- TODO: Update blank fragment layout -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ic_close">
+
+        <include android:id="@+id/layout_search_sort"
+            layout="@layout/layout_search_sort"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleCert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_search_sort"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

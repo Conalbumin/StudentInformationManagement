@@ -1,0 +1,34 @@
+[
+  {
+    "Email": "mason123@email.com",
+    "Name": "Mason",
+    "Age": 22,
+    "PhoneNumber": "0987 123 456",
+    "Status": true,
+    "Role": "manager"
+  },
+  {
+    "Email": "logan567@example.com",
+    "Name": "Logan",
+    "Age": 33,
+    "PhoneNumber": "0912 345 678",
+    "Status": true,
+    "Role": "manager"
+  },
+  {
+    "Email": "alexander.mail@yahoo.com",
+    "Name": "Alexander",
+    "Age": "0905 678 901",
+    "PhoneNumber": true,
+    "Status": "employee",
+    "Role": ""
+  },
+  {
+    "Email": "lmanhphi01@gmail.com",
+    "Name": "Phi",
+    "Age": "0978 234 567",
+    "PhoneNumber": true,
+    "Status": "admin",
+    "Role": ""
+  }
+]
