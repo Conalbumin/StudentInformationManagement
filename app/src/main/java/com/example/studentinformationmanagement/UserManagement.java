@@ -1,13 +1,10 @@
 package com.example.studentinformationmanagement;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,16 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.ExportedUserRecord;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.ListUsersPage;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.auth.UserRecord;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +30,6 @@ public class UserManagement extends AppCompatActivity {
     private static DatabaseReference databaseReference;
     private AppCompatButton userBtn, studentBtn, profileBtn;
     private SearchView searchBar;
-    private Spinner sort;
     private RelativeLayout item_user;
 
     @Override
@@ -50,7 +39,6 @@ public class UserManagement extends AppCompatActivity {
 
         // Initialize views
         searchBar = findViewById(R.id.search);
-        sort = findViewById(R.id.sort);
         userBtn = findViewById(R.id.userBtn);
         studentBtn = findViewById(R.id.studentBtn);
         profileBtn = findViewById(R.id.profileBtn);

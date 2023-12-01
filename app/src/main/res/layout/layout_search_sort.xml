@@ -43,6 +43,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/btnSortByName"
                     android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:text="Sort name: Asc"
@@ -50,7 +51,6 @@
                     android:textAllCaps="false"
                     android:background="@drawable/frame"
                     android:gravity="center"
-                    android:id="@+id/btnSortByName"
                     android:padding="8dp"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -61,6 +61,7 @@
                     android:layout_weight="1"/>
 
                 <TextView
+                    android:id="@+id/btnSortByEmail"
                     android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/frame"
@@ -68,7 +69,6 @@
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:gravity="center"
-                    android:id="@+id/btnSortByEmail"
                     android:padding="8dp"
                     android:clickable="true"
                     android:focusable="true"/>

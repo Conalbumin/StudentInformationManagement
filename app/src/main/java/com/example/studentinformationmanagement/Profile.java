@@ -1,9 +1,13 @@
 package com.example.studentinformationmanagement;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,11 +21,12 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import android.net.Uri;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Profile extends AppCompatActivity {
-    private SharedPreferences sharedPreferences;
+    private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
     private CircleImageView avatar;
     private TextView id_fullName_TextView;
@@ -35,9 +40,6 @@ public class Profile extends AppCompatActivity {
 
         // Initialize FirebaseAuth
         auth = FirebaseAuth.getInstance();
-
-        // Initialize SharedPreferences
-        sharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE);
 
         // Initialize views
         avatar = findViewById(R.id.id_profile_image);
@@ -61,30 +63,69 @@ public class Profile extends AppCompatActivity {
         });
 
         userBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, Login.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
-        studentBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-            finish();
-        });
+//        studentBtn.setOnClickListener(view -> {
+//            Intent intent = new Intent(this, Login.class);
+//            startActivity(intent);
+//            finish();
+//        });
 
         avatar.setOnClickListener(view -> {
-            // change profile picture
-            FirebaseUser user = auth.getCurrentUser();
-            UserProfileChangeRequest avatarUpdate = new UserProfileChangeRequest.Builder()
-                    .setPhotoUri(photoUri)
-                    .build();
-            user.updateProfile(avatarUpdate)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "Avatar updated.");
-                        }
-                    });
+            Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
         });
     }
 
+    // Add onActivityResult method to handle the result of the image picker
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE && data != null) {
+                // Use the onSelectFromGalleryResult method to handle the selected image
+                onSelectFromGalleryResult(data);
+            }
+        }
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        if (data != null) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                // Update the user's profile picture on Firebase Authentication
+                FirebaseUser user = auth.getCurrentUser();
+                UserProfileChangeRequest avatarUpdate = new UserProfileChangeRequest.Builder()
+                        .setPhotoUri(selectedImage)
+                        .build();
+
+                user.updateProfile(avatarUpdate)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("TAG", "Avatar updated.");
+                            }
+                        });
+
+                // Update the CircleImageView in your layout with the new image
+                avatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            }
+        }
+    }
 }

@@ -36,13 +36,6 @@
         </activity>
 
         <activity
-            android:name=".Recovery"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:exported="true">
-
-        </activity>
-
-        <activity
             android:name=".Profile"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="false">

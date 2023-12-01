@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -21,8 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
     private ImageView ic_add_user;
-    private Spinner sort;
     private SearchView searchBar;
+    private TextView btnSortByEmail, btnSortByName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
         profileBtn = findViewById(R.id.profileBtn);
         ic_add_user = findViewById(R.id.ic_add_user);
         auth = FirebaseAuth.getInstance();
-        sort = findViewById(R.id.sort);
         searchBar = findViewById(R.id.search);
+        btnSortByEmail = findViewById(R.id.btnSortByEmail);
+        btnSortByName = findViewById(R.id.btnSortByName);
 
         // Check login status using SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("isLoggedIn", MODE_PRIVATE);
@@ -61,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        ic_add_user.setOnClickListener(view -> {
-            // Call the method to add a new user
-            UserManagement.addNewUser();
-        });
+//        ic_add_user.setOnClickListener(view -> {
+//            // Call the method to add a new user
+//            UserManagement.addNewUser();
+//        });
     }
 }
