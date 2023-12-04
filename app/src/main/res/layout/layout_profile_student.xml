@@ -17,6 +17,14 @@
         android:scaleType="centerCrop"
         tools:ignore="ContentDescription" />
 
+    <ImageView
+        android:id="@+id/ic_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="370dp"
+        android:layout_marginTop="10dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
     <!-- Profile image -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/id_profile_image"
@@ -130,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Date"
+            android:text="Date of birth"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -138,7 +146,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/cerfificate_layout"
+        android:id="@+id/certificate_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date_layout"
@@ -147,7 +155,7 @@
         android:background="@drawable/frame">
 
         <ImageView
-            android:id="@+id/ic_cerfificate"
+            android:id="@+id/ic_certificate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -156,7 +164,7 @@
             android:background="@drawable/ic_collection" />
 
         <TextView
-            android:id="@+id/cerfificate"
+            android:id="@+id/certificate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

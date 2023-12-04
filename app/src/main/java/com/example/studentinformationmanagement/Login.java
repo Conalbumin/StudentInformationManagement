@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,38 +69,31 @@ public class Login extends AppCompatActivity {
             password = String.valueOf(editTextPassword.getText());
 
             if (TextUtils.isEmpty(email)) {
-                Toast.makeText(Login.this, "Enter email",
-                        Toast.LENGTH_SHORT).show();
-                return;
+                editTextEmail.setError("Enter email!");
             }
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(Login.this, "Enter password",
-                        Toast.LENGTH_SHORT).show();
-                return;
+                editTextPassword.setError("Enter password!");
             }
 
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(task -> {
-                        progressBar.setVisibility(View.GONE);
+                    .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(Login.this, "Login Successful.",
-                                    Toast.LENGTH_SHORT).show();
-                            // Update login status to true in SharedPreference
-                            SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putBoolean("isLoggedIn", true);
-                            editor.apply();
+                            Log.e("TAG", "signInWithEmail:success");
 
-                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            Intent intent=new Intent(Login.this, MainActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            // If sign in fails, display a message to the user
-                            Toast.makeText(Login.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            // If sign in fails, display a message to the user.
+                            Log.e("TAG", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     });
+
+
         });
+
     }
 }

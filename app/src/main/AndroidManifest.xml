@@ -13,6 +13,18 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".Login"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".Register"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="true">
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -23,23 +35,65 @@
         </activity>
 
         <activity
-            android:name=".Login"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:exported="true">
-        </activity>
-
-        <activity
-            android:name=".Register"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:exported="true">
-
-        </activity>
-
-        <activity
-            android:name=".Profile"
+            android:name=".StudentManagement"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="false">
         </activity>
+
+        <activity
+            android:name=".UserManagement"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".ProfileUser"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".ProfileStudent"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".AddNewCer"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".AddNewStudent"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".AddNewUser"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".LoginHistory"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".ListCertificate"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
+            android:name=".ListStudent"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
     </application>
 
 </manifest>

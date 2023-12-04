@@ -55,6 +55,7 @@
             android:id="@+id/buttonLogin"
             style="@style/loginButton"
             android:text="Login"
+            android:layout_marginTop="20sp"
             android:textSize="15sp"
             android:gravity="center"
             android:layout_gravity="center" />

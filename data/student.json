@@ -3,60 +3,100 @@
     "ID": "001",
     "Name": "LamDuy",
     "Gender": "male",
-    "Birth": "24/11/2003"
+    "Birth": "24/11/2003",
+    "Certificates": [
+      {"name": "Microsoft Certified: Azure Fundamentals"},
+      {"name": "Cisco Certified Network Associate (CCNA)"}
+    ]
   },
   {
     "ID": "002",
     "Name": "ManhPhi",
     "Gender": "male",
-    "Birth": "11/06/2003"
+    "Birth": "11/06/2003",
+    "Certificates": [
+      {"name": "Cisco Certified Network Associate (CCNA)"},
+      {"name": "Project Management Professional (PMP)"}
+    ]
   },
   {
     "ID": "003",
     "Name": "MaiTrang",
     "Gender": "female",
-    "Birth": "15/09/2002"
+    "Birth": "15/09/2002",
+    "Certificates": [
+      {"name": "Project Management Professional (PMP)"},
+      {"name": "AWS Certified Solutions Architect"}
+    ]
   },
   {
     "ID": "004",
     "Name": "QuocAnh",
     "Gender": "male",
-    "Birth": "02/03/2004"
+    "Birth": "02/03/2004",
+    "Certificates": [
+      {"name": "Certified Ethical Hacker (CEH)"},
+      {"name": "AWS Certified Solutions Architect"}
+    ]
   },
   {
     "ID": "005",
     "Name": "ThuyLinh",
     "Gender": "female",
-    "Birth": "07/12/2001"
+    "Birth": "07/12/2001",
+    "Certificates": [
+      {"name": "AWS Certified Solutions Architect"},
+      {"name": "Certified Ethical Hacker (CEH)"}
+    ]
   },
   {
     "ID": "006",
     "Name": "TuanKiet",
     "Gender": "male",
-    "Birth": "19/05/2000"
+    "Birth": "19/05/2000",
+    "Certificates": [
+      {"name": "Certified ScrumMaster (CSM)"},
+      {"name": "CompTIA Security+"}
+    ]
   },
   {
     "ID": "007",
     "Name": "HoangLong",
     "Gender": "male",
-    "Birth": "08/08/2003"
+    "Birth": "08/08/2003",
+    "Certificates": [
+      {"name": "CompTIA Security+"},
+      {"name": "IL 8.0"}
+    ]
   },
   {
     "ID": "008",
     "Name": "NgocHuong",
     "Gender": "female",
-    "Birth": "30/04/2005"
+    "Birth": "30/04/2005",
+    "Certificates": [
+      {"name": "Google Cloud Professional Cloud Architect"},
+      {"name": "TOEIC 890"}
+    ]
   },
   {
     "ID": "009",
     "Name": "PhuongNam",
     "Gender": "male",
-    "Birth": "12/10/2002"
+    "Birth": "12/10/2002",
+    "Certificates": [
+      {"name": "Adobe Certified Expert (ACE)"},
+      {"name": "MOS 950"}
+    ]
   },
   {
     "ID": "010",
     "Name": "MyHanh",
     "Gender": "female",
-    "Birth": "03/07/2001"
+    "Birth": "03/07/2001",
+    "Certificates": [
+      {"name": "Certified Information Systems Security Professional (CISSP)"},
+      {"name": "Aptis 180"}
+    ]
   }
 ]

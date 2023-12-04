@@ -1,15 +1,12 @@
 package com.example.studentinformationmanagement;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,18 +22,19 @@ import android.net.Uri;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Profile extends AppCompatActivity {
+public class ProfileUser extends AppCompatActivity {
     private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
+    private FirebaseUser user;
     private CircleImageView avatar;
     private TextView id_fullName_TextView;
-    private LinearLayout email_layout, age_layout, phone_layout, logout_layout;
+    private LinearLayout email_layout, age_layout, phone_layout, logout_layout, loginHistory;
     private AppCompatButton userBtn, studentBtn, profileBtn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_profile_user);
 
         // Initialize FirebaseAuth
         auth = FirebaseAuth.getInstance();
@@ -47,6 +45,7 @@ public class Profile extends AppCompatActivity {
         email_layout = findViewById(R.id.email_layout);
         age_layout = findViewById(R.id.age_layout);
         phone_layout = findViewById(R.id.phone_layout);
+        loginHistory = findViewById(R.id.loginHistory);
         logout_layout = findViewById(R.id.logout_layout);
         userBtn = findViewById(R.id.userBtn);
         studentBtn = findViewById(R.id.studentBtn);
@@ -54,7 +53,7 @@ public class Profile extends AppCompatActivity {
 
         logout_layout.setOnClickListener(view -> {
             auth.signOut();
-            Toast.makeText(Profile.this, "Signed out", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ProfileUser.this, "Signed out", Toast.LENGTH_SHORT).show();
 
             // Redirect to the login activity
             Intent intent = new Intent(this, Login.class);
@@ -68,11 +67,22 @@ public class Profile extends AppCompatActivity {
             finish();
         });
 
-//        studentBtn.setOnClickListener(view -> {
-//            Intent intent = new Intent(this, Login.class);
-//            startActivity(intent);
-//            finish();
-//        });
+        studentBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, StudentManagement.class);
+            startActivity(intent);
+            finish();
+        });
+
+        profileBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ProfileUser.class);
+            startActivity(intent);
+            finish();
+        });
+
+        loginHistory.setOnClickListener(view -> {
+            Intent intent = new Intent(this, LoginHistory.class);
+            startActivity(intent);
+        });
 
         avatar.setOnClickListener(view -> {
             Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
@@ -81,6 +91,24 @@ public class Profile extends AppCompatActivity {
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
         });
+    }
+
+    protected void getInfoUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
+
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getIdToken() instead.
+            String uid = user.getUid();
+        }
     }
 
     // Add onActivityResult method to handle the result of the image picker

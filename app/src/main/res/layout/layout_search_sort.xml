@@ -3,7 +3,6 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -19,14 +18,13 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <SearchView
-                android:id="@+id/student_search_bar"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/frame"
-                android:iconifiedByDefault="false"
                 android:queryBackground="@android:color/transparent"
-                android:queryHint="Enter username" />
+                android:hint="Enter username"/>
         </LinearLayout>
 
         <LinearLayout
@@ -46,7 +44,7 @@
                     android:id="@+id/btnSortByName"
                     android:layout_width="125dp"
                     android:layout_height="wrap_content"
-                    android:text="Sort name: Asc"
+                    android:text="Sort by name"
                     android:textColor="@color/black"
                     android:textAllCaps="false"
                     android:background="@drawable/frame"
@@ -61,11 +59,11 @@
                     android:layout_weight="1"/>
 
                 <TextView
-                    android:id="@+id/btnSortByEmail"
+                    android:id="@+id/btnSortByID"
                     android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/frame"
-                    android:text="Sort email: Asc"
+                    android:text="Sort by ID"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:gravity="center"

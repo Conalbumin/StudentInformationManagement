@@ -19,9 +19,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ic_close"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
         android:background="@drawable/frame"
+        android:gravity="center"
         android:text="Add a new user"
         android:textColor="#2196F3"
         android:textSize="30dp" />
@@ -32,94 +33,46 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Username"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtUsername"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/userEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userName"
-        android:layout_marginTop="12dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Email"
-            android:textColor="@color/black" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtUserEmail"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/userAge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/userEmail"
+        android:layout_below="@+id/userName"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Age"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtUserAge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtUserAge"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -128,30 +81,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/userAge"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Phone"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtUserPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtUserPhone"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -160,38 +105,58 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/userPhone"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Role"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtUserRole"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
+            android:layout_marginLeft="5dp" />
+    </LinearLayout>
 
-            <EditText
-                android:id="@+id/txtUserRole"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/userStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userRole"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="Status"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <Switch
+            android:id="@+id/txtUserStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginLeft="5dp"
+            android:clickable="true" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnAddCer"
+        android:id="@+id/btnAddUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/userStatus"
+        android:layout_marginLeft="40sp"
         android:layout_marginTop="20sp"
-        android:layout_below="@+id/userRole"
+        android:layout_marginRight="40sp"
         android:background="@drawable/login_button_bk"
         android:text="Add"
         android:textColor="@color/white"

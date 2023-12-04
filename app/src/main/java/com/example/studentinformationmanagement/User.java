@@ -73,12 +73,4 @@ public class User {
                 "\nStatus: " + status +
                 "\nRole: " + isAdmin;
     }
-
-    public static ArrayList<User> getUsersList() {
-        ArrayList<User> usersList = new ArrayList<>();
-        usersList.add(new User("user1@example.com", "User One", 25, "123456789", true, "user"));
-        usersList.add(new User("user2@example.com", "User Two", 30, "987654321", true, "admin"));
-
-        return usersList;
-    }
 }

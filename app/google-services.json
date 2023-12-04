@@ -1,44 +1,27 @@
 {
   "project_info": {
-    "project_number": "8582761118",
-    "project_id": "studentinformationmanage-699fd",
-    "storage_bucket": "studentinformationmanage-699fd.appspot.com"
+    "project_number": "137835910502",
+    "firebase_url": "https://studentinformationmanage-f2d27-default-rtdb.firebaseio.com",
+    "project_id": "studentinformationmanage-f2d27",
+    "storage_bucket": "studentinformationmanage-f2d27.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:8582761118:android:78d6f592462edf02cd098f",
+        "mobilesdk_app_id": "1:137835910502:android:9a83a628996acea79624a7",
         "android_client_info": {
           "package_name": "com.example.studentinformationmanagement"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "8582761118-ar6mb4h3lhsisl8c0n486qce30bop9jo.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.studentinformationmanagement",
-            "certificate_hash": "e99a8b0ddf625d9a50fe58403d10e108561ab240"
-          }
-        },
-        {
-          "client_id": "8582761118-89md9qn6paapcdog8e1r5rrl16iq8ep3.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDndFM6mZsRPTV_ulh3MlflnWJt2vaxCco"
+          "current_key": "AIzaSyBKae4jJSIvtdWZTTuqnTA2ULYl2wRyqVg"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "8582761118-89md9qn6paapcdog8e1r5rrl16iq8ep3.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

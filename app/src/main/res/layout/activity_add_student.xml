@@ -19,12 +19,13 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ic_close"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
         android:background="@drawable/frame"
+        android:gravity="center"
         android:text="Add a new student"
         android:textColor="#2196F3"
-        android:textSize="30dp" />
+        android:textSize="28dp" />
 
     <LinearLayout
         android:id="@+id/studentId"
@@ -32,30 +33,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Student ID"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtStudentId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtStudentId"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,103 +57,105 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/studentId"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Full Name"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtStudentName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
+            android:layout_marginLeft="5dp" />
 
-            <EditText
-                android:id="@+id/txtStudentName"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/email"
+        android:id="@+id/gender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fullname"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Email"
-            android:textColor="@color/black" />
+            android:layout_marginLeft="15dp"
+            android:text="Gender"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtUserGender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtStudentEmail"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gender"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="Date of birth"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/txtUserDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/studentCerList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/email"
+        android:layout_below="@+id/date"
         android:layout_marginTop="12dp"
+        android:background="@drawable/frame"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:text="Certificates"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtStudentCer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/txtStudentCer"
-                android:layout_width="match_parent"
-                android:layout_height="43dp"
-                android:layout_marginLeft="5dp" />
-        </LinearLayout>
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnAddCer"
+        android:id="@+id/btnAddStudent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20sp"
         android:layout_below="@+id/studentCerList"
+        android:layout_marginLeft="40sp"
+        android:layout_marginTop="20sp"
+        android:layout_marginRight="40sp"
         android:background="@drawable/login_button_bk"
         android:text="Add"
         android:textColor="@color/white"

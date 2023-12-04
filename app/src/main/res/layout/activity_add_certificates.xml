@@ -21,10 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
+        android:gravity="center"
         android:background="@drawable/frame"
         android:text="Add a new certificate"
         android:textColor="#2196F3"
-        android:textSize="30dp"/>
+        android:textSize="28sp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,14 +36,17 @@
             android:id="@+id/searchBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:background="@drawable/frame">
 
-            <SearchView
+            <EditText
                 android:id="@+id/search"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:iconifiedByDefault="false"
-                android:queryHint="Enter here" />
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="Enter here" />
         </LinearLayout>
 
         <Button
@@ -50,7 +54,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/searchBar"
+            android:layout_marginLeft="40sp"
             android:layout_marginTop="20sp"
+            android:layout_marginRight="40sp"
             android:background="@drawable/login_button_bk"
             android:text="Add"
             android:textColor="@color/white"
