@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -18,6 +19,13 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+
 import android.net.Uri;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -26,9 +34,10 @@ public class ProfileUser extends AppCompatActivity {
     private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
     private FirebaseUser user;
+    private FirebaseStorage storage;
     private CircleImageView avatar;
     private TextView id_fullName_TextView;
-    private LinearLayout email_layout, age_layout, phone_layout, logout_layout, loginHistory;
+    private LinearLayout role_layout, age_layout, phone_layout, logout_layout, loginHistory;
     private AppCompatButton userBtn, studentBtn, profileBtn;
 
     @Override
@@ -42,7 +51,7 @@ public class ProfileUser extends AppCompatActivity {
         // Initialize views
         avatar = findViewById(R.id.id_profile_image);
         id_fullName_TextView = findViewById(R.id.id_fullName_TextView);
-        email_layout = findViewById(R.id.email_layout);
+        role_layout = findViewById(R.id.role_layout);
         age_layout = findViewById(R.id.age_layout);
         phone_layout = findViewById(R.id.phone_layout);
         loginHistory = findViewById(R.id.loginHistory);
@@ -50,6 +59,8 @@ public class ProfileUser extends AppCompatActivity {
         userBtn = findViewById(R.id.userBtn);
         studentBtn = findViewById(R.id.studentBtn);
         profileBtn = findViewById(R.id.profileBtn);
+
+        getInfoUser(); // Fetch and display user information
 
         logout_layout.setOnClickListener(view -> {
             auth.signOut();
@@ -96,20 +107,46 @@ public class ProfileUser extends AppCompatActivity {
     protected void getInfoUser(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+            storage = FirebaseStorage.getInstance();
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String name = snapshot.child("Name").getValue(String.class);
+                        int age = snapshot.child("Age").getValue(Integer.class);
+                        String phone = snapshot.child("PhoneNumber").getValue(String.class);
+                        String role = snapshot.child("Role").getValue(String.class);
 
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
+                        // Call the updateUI method with the obtained information
+                        updateUI(name, age, phone, role);
+                    }
+                }
 
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getIdToken() instead.
-            String uid = user.getUid();
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Firebase Error", "Error getting user data", error.toException());
+                }
+            });
         }
     }
+
+    private void updateUI(String name, int age, String phoneNumber, String role) {
+        id_fullName_TextView.setText(name);
+
+        // Update age
+        TextView ageTextView = age_layout.findViewById(R.id.age); // Replace with the actual ID of the age TextView
+        ageTextView.setText(String.valueOf(age)); // Convert age to String before setting it
+
+        // Update phone number
+        TextView phoneTextView = phone_layout.findViewById(R.id.phone); // Replace with the actual ID of the phone TextView
+        phoneTextView.setText(phoneNumber);
+
+        // Update role (assuming you have a TextView for displaying the role)
+        TextView roleTextView = role_layout.findViewById(R.id.role); // Replace with the actual ID of the role TextView
+        roleTextView.setText(role);
+    }
+
 
     // Add onActivityResult method to handle the result of the image picker
     @Override

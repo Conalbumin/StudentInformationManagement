@@ -1,6 +1,7 @@
 package com.example.studentinformationmanagement;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -12,22 +13,38 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+
 import android.net.Uri;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileStudent extends AppCompatActivity {
     private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
+    private FirebaseUser currentUser;
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("students").child("001");
+    private FirebaseStorage storage;
+    private AdapterCertificate adapterCertificate;
     private CircleImageView avatar;
-    private TextView id_fullName_TextView;
+    private TextView id_fullName_TextView, certificate;
     private ImageView ic_close;
     private LinearLayout id_layout, gender_layout, date_layout, certificate_layout;
     @Override
@@ -46,6 +63,22 @@ public class ProfileStudent extends AppCompatActivity {
         gender_layout = findViewById(R.id.gender_layout);
         date_layout = findViewById(R.id.date_layout);
         certificate_layout = findViewById(R.id.certificate_layout);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    Student student = snapshot.getValue(Student.class);
+                    updateUI(student);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase Error", "Error getting data", error.toException());
+
+            }
+        });
 
         ic_close.setOnClickListener(view -> {
             finish(); // Close the activity
@@ -78,6 +111,34 @@ public class ProfileStudent extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
         });
     }
+
+    private void updateUI(Student student) {
+        // Update UI elements with the data from the Student object
+        id_fullName_TextView.setText(student.getName());
+        // Set other UI elements similarly
+    }
+//
+//    private void updateCertificatesUI(ArrayList<Certificate> certificates) {
+//        // Show a dialog when the "certificate" TextView is clicked
+//        certificate.setOnClickListener(view -> showCertificatesDialog(certificates));
+//    }
+//
+//    private void showCertificatesDialog(ArrayList<Certificate> certificates) {
+//        // Create a dialog
+//        Dialog dialog = new Dialog(this);
+//        dialog.setContentView(R.layout.list_certificate);
+//
+//        // Find the RecyclerView in the dialog layout
+//        RecyclerView recyclerView = dialog.findViewById(R.id.listview);
+//
+//        // Set up the adapter and layout manager
+//        AdapterCertificate adapter = new AdapterCertificate(this, certificates);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(adapter);
+//
+//        // Show the dialog
+//        dialog.show();
+//    }
 
     // Add onActivityResult method to handle the result of the image picker
     @Override

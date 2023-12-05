@@ -8,17 +8,19 @@ public class User {
     private int age;
     private String phoneNumber;
     private boolean status;
-    private String isAdmin;
+    private String role;
 
     // Constructor
-    public User(String email, String name, int age, String phoneNumber, boolean status, String isAdmin) {
+    public User(String email, String name, int age, String phoneNumber, boolean status, String role) {
         this.email = email;
         this.name = name;
         this.age = age;
         this.phoneNumber = phoneNumber;
         this.status = status;      // on/off
-        this.isAdmin = isAdmin;    // admin/manager/employee
+        this.role = role;    // admin/manager/employee
     }
+
+    public User(){}
 
     public String getEmail() {
         return email;
@@ -27,8 +29,8 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public void setIsAdmin(String isAdmin) {
-        this.isAdmin = isAdmin;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getName() {
@@ -55,11 +57,11 @@ public class User {
     public void setStatus(boolean status) {
         this.status = status;
     }
-    public String isAdmin() {
-        return isAdmin;
+    public String role() {
+        return role;
     }
     public void setAdmin(String admin) {
-        isAdmin = admin;
+        role = admin;
     }
 
 
@@ -71,6 +73,6 @@ public class User {
                 "\nAge: " + age +
                 "\nPhone Number: " + phoneNumber +
                 "\nStatus: " + status +
-                "\nRole: " + isAdmin;
+                "\nRole: " + role;
     }
 }

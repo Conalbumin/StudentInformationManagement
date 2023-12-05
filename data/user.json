@@ -1,34 +1,26 @@
-[
-  {
-    "Email": "mason123@email.com",
+{
+  "khhlVkshKsf4RbwWlIHMSI0UaiW2": {
+    "Email": "admin@email.com",
+    "Name": "Manh Phi",
+    "Age": 22,
+    "PhoneNumber": "0916 740 557",
+    "Status": true,
+    "Role": "admin"
+  },
+  "tE0YxyvorQPMVya7VUDD6YLVEbk2": {
+    "Email": "test@email.com",
     "Name": "Mason",
     "Age": 22,
     "PhoneNumber": "0987 123 456",
     "Status": true,
-    "Role": "manager"
+    "Role": "Manager"
   },
-  {
-    "Email": "logan567@example.com",
-    "Name": "Logan",
-    "Age": 33,
-    "PhoneNumber": "0912 345 678",
+  "gs2ojOfXiNXO5zNwb9MdMJWVBv23": {
+    "Email": "user@email.com",
+    "Name": "Tyson",
+    "Age": 22,
+    "PhoneNumber": "0987 456 123",
     "Status": true,
-    "Role": "manager"
-  },
-  {
-    "Email": "alexander.mail@yahoo.com",
-    "Name": "Alexander",
-    "Age": "0905 678 901",
-    "PhoneNumber": true,
-    "Status": "employee",
-    "Role": ""
-  },
-  {
-    "Email": "lmanhphi01@gmail.com",
-    "Name": "Phi",
-    "Age": "0978 234 567",
-    "PhoneNumber": true,
-    "Status": "admin",
-    "Role": ""
+    "Role": "Employee"
   }
-]
+}

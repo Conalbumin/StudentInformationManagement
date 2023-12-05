@@ -1,5 +1,6 @@
 package com.example.studentinformationmanagement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -73,5 +74,10 @@ public class ListStudent extends AppCompatActivity {
         });
 
         icClose.setOnClickListener(view -> finish());
+
+//        itemStudent.setOnClickListener(view -> {
+//            Intent intent = new Intent(this, ProfileStudent.class);
+//            startActivity(intent);
+//        });
     }
 }
