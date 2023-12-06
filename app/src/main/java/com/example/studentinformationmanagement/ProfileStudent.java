@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import android.net.Uri;
 
@@ -42,9 +44,8 @@ public class ProfileStudent extends AppCompatActivity {
     private FirebaseUser currentUser;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("students").child("001");
     private FirebaseStorage storage;
-    private AdapterCertificate adapterCertificate;
     private CircleImageView avatar;
-    private TextView id_fullName_TextView, certificate;
+    private TextView id_fullName_TextView;
     private ImageView ic_close;
     private LinearLayout id_layout, gender_layout, date_layout, certificate_layout;
     @Override
@@ -68,8 +69,12 @@ public class ProfileStudent extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    Student student = snapshot.getValue(Student.class);
-                    updateUI(student);
+                    String name = snapshot.child("Name").getValue(String.class);
+                    String id = snapshot.child("ID").getValue(String.class);
+                    String gender = snapshot.child("Gender").getValue(String.class);
+                    String date = snapshot.child("Birth").getValue(String.class);
+
+                    updateUI(name, id, gender, date);
                 }
             }
 
@@ -97,7 +102,7 @@ public class ProfileStudent extends AppCompatActivity {
         });
 
         certificate_layout.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ProfileStudent.class);
+            Intent intent = new Intent(this, ListCertificate.class);
             startActivity(intent);
             finish();
         });
@@ -108,39 +113,33 @@ public class ProfileStudent extends AppCompatActivity {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
+            startActivity(Intent.createChooser(intent, "Select File"));
         });
     }
 
-    private void updateUI(Student student) {
-        // Update UI elements with the data from the Student object
-        id_fullName_TextView.setText(student.getName());
-        // Set other UI elements similarly
-    }
-//
-//    private void updateCertificatesUI(ArrayList<Certificate> certificates) {
-//        // Show a dialog when the "certificate" TextView is clicked
-//        certificate.setOnClickListener(view -> showCertificatesDialog(certificates));
-//    }
-//
-//    private void showCertificatesDialog(ArrayList<Certificate> certificates) {
-//        // Create a dialog
-//        Dialog dialog = new Dialog(this);
-//        dialog.setContentView(R.layout.list_certificate);
-//
-//        // Find the RecyclerView in the dialog layout
-//        RecyclerView recyclerView = dialog.findViewById(R.id.listview);
-//
-//        // Set up the adapter and layout manager
-//        AdapterCertificate adapter = new AdapterCertificate(this, certificates);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(adapter);
-//
-//        // Show the dialog
-//        dialog.show();
-//    }
+    private void updateUI(String name, String id, String gender, String date) {
+        // Update UI elements with the data
+        id_fullName_TextView.setText(name);
 
-    // Add onActivityResult method to handle the result of the image picker
+        // Find the TextView in id_layout and set the ID
+        TextView idTextView = id_layout.findViewById(R.id.id);
+        idTextView.setText("ID: " + id);
+
+        // Find the TextView in gender_layout and set the gender
+        TextView genderTextView = gender_layout.findViewById(R.id.gender);
+        genderTextView.setText("Gender: " + gender);
+
+        // Find the TextView in date_layout and set the birth date
+        TextView dateTextView = date_layout.findViewById(R.id.date);
+        dateTextView.setText("Birth Date: " + date);
+
+        // Find the TextView in certificate_layout and set the certificate
+        TextView certificateTextView = certificate_layout.findViewById(R.id.certificate);
+        certificateTextView.setText("Certificates");
+    }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -156,33 +155,54 @@ public class ProfileStudent extends AppCompatActivity {
     private void onSelectFromGalleryResult(Intent data) {
         if (data != null) {
             Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
+            if (selectedImage != null) {
+                // Log the selectedImage Uri to check if it is valid
+                Log.e("TAG", "Selected Image Uri: " + selectedImage);
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
+                // Get a reference to the Firebase Storage
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
 
-                // Update the user's profile picture on Firebase Authentication
-                FirebaseUser user = auth.getCurrentUser();
-                UserProfileChangeRequest avatarUpdate = new UserProfileChangeRequest.Builder()
-                        .setPhotoUri(selectedImage)
-                        .build();
+                // Create a reference to the file you want to upload
+                String fileName = "profile_images/" + auth.getCurrentUser().getUid() + ".jpg";
+                StorageReference imageRef = storageRef.child(fileName);
 
-                user.updateProfile(avatarUpdate)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("TAG", "Avatar updated.");
-                            }
+                // Upload the file to Firebase Storage
+                imageRef.putFile(selectedImage)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            // Get the download URL of the uploaded file
+                            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                // Update the user's profile picture on Firebase Authentication
+                                FirebaseUser user = auth.getCurrentUser();
+                                UserProfileChangeRequest avatarUpdate = new UserProfileChangeRequest.Builder()
+                                        .setPhotoUri(uri)
+                                        .build();
+
+                                user.updateProfile(avatarUpdate)
+                                        .addOnCompleteListener(task -> {
+                                            if (task.isSuccessful()) {
+                                                Log.d("TAG", "Avatar updated.");
+                                            }
+                                        });
+
+                                // Update the CircleImageView in your layout with the new image
+                                avatar.setImageURI(uri);
+                            }).addOnFailureListener(e -> {
+                                Log.e("TAG", "Error getting download URL", e);
+                            });
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("TAG", "Error uploading image", e);
                         });
-
-                // Update the CircleImageView in your layout with the new image
-                avatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            } else {
+                // Handle the case when selectedImage is null
+                Log.e("TAG", "Selected Image Uri is null");
+                Toast.makeText(this, "Failed to retrieve selected image", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+
+
 }

@@ -1,8 +1,9 @@
 package com.example.studentinformationmanagement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Student {
-    private List<Certificate> Certificates;
+    private ArrayList<String> Certificates;
     private String Gender;
     private String ID;
     private String Birth;
@@ -11,7 +12,7 @@ public class Student {
     // Constructors, getters, setters
 
     // Example constructor
-    public Student(String ID, String Name, String Birth, String Gender, List<Certificate> Certificates) {
+    public Student(String ID, String Name, String Birth, String Gender, ArrayList<String> Certificates) {
         this.ID = ID;
         this.Name = Name;
         this.Birth = Birth;
@@ -20,7 +21,7 @@ public class Student {
     }
 
     // Parameterized constructor
-    public Student(List<Certificate> certificates) {
+    public Student(ArrayList<String> certificates) {
         this.Certificates = certificates;
     }
 
@@ -61,11 +62,11 @@ public class Student {
         this.Gender = Gender;
     }
 
-    public List<Certificate> getCertificates() {
+    public ArrayList<String> getCertificates() {
         return Certificates;
     }
 
-    public void setCertificates(List<Certificate> Certificates) {
+    public void setCertificates(ArrayList<String> Certificates) {
         this.Certificates = Certificates;
     }
 

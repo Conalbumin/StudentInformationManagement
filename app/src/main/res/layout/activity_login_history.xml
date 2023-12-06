@@ -26,10 +26,10 @@
         android:textColor="#2196F3"
         android:textSize="30sp" />
 
-    <include android:id="@+id/list_user_history"
+    <include android:id="@+id/user_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/loginHistory"
-        layout="@layout/list_user_history"/>
+        layout="@layout/item_user"/>
 
 </RelativeLayout>

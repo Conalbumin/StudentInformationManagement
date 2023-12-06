@@ -3,76 +3,82 @@ package com.example.studentinformationmanagement;
 import java.util.ArrayList;
 
 public class User {
-    private String email;
-    private String name;
-    private int age;
-    private String phoneNumber;
-    private boolean status;
-    private String role;
+    private String Email;
+    private String Name;
+    private int Age;
+    private String PhoneNumber;
+    private boolean Status;
+    private String Role;
 
     // Constructor
-    public User(String email, String name, int age, String phoneNumber, boolean status, String role) {
-        this.email = email;
-        this.name = name;
-        this.age = age;
-        this.phoneNumber = phoneNumber;
-        this.status = status;      // on/off
-        this.role = role;    // admin/manager/employee
+    public User(String Email, String Name, int Age, String PhoneNumber, boolean Status, String Role) {
+        this.Email = Email;
+        this.Name = Name;
+        this.Age = Age;
+        this.PhoneNumber = PhoneNumber;
+        this.Status = Status;      // on/off
+        this.Role = Role;    // admin/manAger/employee
     }
 
     public User(){}
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
-    }
-    public void setRole(String role) {
-        this.role = role;
+        Email = email;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
+
     public void setName(String name) {
-        this.name = name;
+        Name = name;
     }
+
     public int getAge() {
-        return age;
+        return Age;
     }
+
     public void setAge(int age) {
-        this.age = age;
+        Age = age;
     }
+
     public String getPhoneNumber() {
-        return phoneNumber;
+        return PhoneNumber;
     }
+
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        PhoneNumber = phoneNumber;
     }
-    public boolean getStatus() {
-        return status;
+
+    public boolean isStatus() {
+        return Status;
     }
+
     public void setStatus(boolean status) {
-        this.status = status;
-    }
-    public String role() {
-        return role;
-    }
-    public void setAdmin(String admin) {
-        role = admin;
+        Status = status;
     }
 
+    public String getRole() {
+        return Role;
+    }
 
-    // Override toString method to display user details
+    public void setRole(String role) {
+        Role = role;
+    }
+
     @Override
     public String toString() {
-        return  "Email: " + email +
-                "\nName: " + name +
-                "\nAge: " + age +
-                "\nPhone Number: " + phoneNumber +
-                "\nStatus: " + status +
-                "\nRole: " + role;
+        return "User{" +
+                "Email='" + Email + '\'' +
+                ", Name='" + Name + '\'' +
+                ", Age=" + Age +
+                ", PhoneNumber='" + PhoneNumber + '\'' +
+                ", Status=" + Status +
+                ", Role='" + Role + '\'' +
+                '}';
     }
 }

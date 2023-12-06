@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_bar"
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/frame"
@@ -16,10 +16,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search_bar">
+        android:layout_below="@+id/searchBar">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listview"
+            android:id="@+id/listviewUser"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_user_remove"/>
