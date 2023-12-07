@@ -111,42 +111,50 @@ public class ProfileStudent extends AppCompatActivity {
     }
 
     private void getInfoStudent() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String userId = user.getUid();
+        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("students");
+        Log.e("ProfileStudent", "StudentRef " + studentRef);
+        studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("ProfileStudent", "onDataChange called");
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
+                        // Access the unique identifier (key) for each student
+                        String studentId = studentSnapshot.child("ID").getValue(String.class);
+                        String name = studentSnapshot.child("Name").getValue(String.class);
+                        String gender = studentSnapshot.child("Gender").getValue(String.class);
+                        String birth = studentSnapshot.child("Birth").getValue(String.class);
 
-            DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child("ID");
-            Query query = studentRef.orderByChild("ID").equalTo(userId);
-            Log.e("ProfileStudent", "StudentRef " + studentRef);
-
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Log.e("ProfileStudent", "onDataChange called");
-                    if (dataSnapshot.exists()) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Student student = snapshot.getValue(Student.class);
-                            Log.e("ProfileStudent", "DataSnapshot key: " + dataSnapshot.getKey());
-
-                            // Log the student data to verify
-                            Log.e("ProfileStudent", "Student: " + student.toString());
-
-                            // Call the updateUI method with the obtained information
-                            updateUI(student.getName(), student.getID(), student.getGender(), student.getBirth());
-                            break;  // Assuming there's only one matching student
+                        // Access the Certificates array
+                        ArrayList<String> certificates = new ArrayList<>();
+                        for (DataSnapshot certificateSnapshot : studentSnapshot.child("Certificates").getChildren()) {
+                            String certificateName = certificateSnapshot.child("name").getValue(String.class);
+                            certificates.add(certificateName);
                         }
-                    } else {
-                        Log.e("ProfileStudent", "onDataChange failed: Snapshot does not exist");
-                    }
-                }
+                        Log.e("ProfileStudent", "Student " + studentId);
+                        Log.e("ProfileStudent", "Student " + name);
+                        Log.e("ProfileStudent", "Student " + gender);
+                        Log.e("ProfileStudent", "Student " + birth);
+                        Log.e("ProfileStudent", "Student " + certificates);
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("Firebase Error", "Error getting student data", error.toException());
+
+
+                        // Call the updateUI method with the obtained information
+                        updateUI(name, studentId, gender, birth);
+                        break;  // Assuming there's only one matching student
+                    }
+                } else {
+                    Log.e("ProfileStudent", "onDataChange failed: Snapshot does not exist");
                 }
-            });
-        }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase Error", "Error getting student data", error.toException());
+            }
+        });
     }
+
+
 
 
     @Override
