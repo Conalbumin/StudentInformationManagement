@@ -42,7 +42,7 @@ public class ProfileStudent extends AppCompatActivity {
     private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("students").child("001");
+    private DatabaseReference databaseReference;
     private FirebaseStorage storage;
     private CircleImageView avatar;
     private TextView id_fullName_TextView;
@@ -65,25 +65,7 @@ public class ProfileStudent extends AppCompatActivity {
         date_layout = findViewById(R.id.date_layout);
         certificate_layout = findViewById(R.id.certificate_layout);
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    String name = snapshot.child("Name").getValue(String.class);
-                    String id = snapshot.child("ID").getValue(String.class);
-                    String gender = snapshot.child("Gender").getValue(String.class);
-                    String date = snapshot.child("Birth").getValue(String.class);
-
-                    updateUI(name, id, gender, date);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase Error", "Error getting data", error.toException());
-
-            }
-        });
+        getInfoUser(); // Fetch and display user information
 
         ic_close.setOnClickListener(view -> {
             finish(); // Close the activity
@@ -136,6 +118,39 @@ public class ProfileStudent extends AppCompatActivity {
         // Find the TextView in certificate_layout and set the certificate
         TextView certificateTextView = certificate_layout.findViewById(R.id.certificate);
         certificateTextView.setText("Certificates");
+    }
+
+    protected void getInfoUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child(user.getUid());
+            storage = FirebaseStorage.getInstance();
+            studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.e("ProfileStudent", "onDataChange called");
+                    if (snapshot.exists()) {
+                        String name = snapshot.child("Name").getValue(String.class);
+                        String id = snapshot.child("ID").getValue(String.class);
+                        String gender = snapshot.child("Gender").getValue(String.class);
+                        String date = snapshot.child("Birth").getValue(String.class);
+                        ArrayList<Certificate> certificates = snapshot.child("Certificates").getValue(ArrayList.class);
+
+                        Log.e("ProfileStudent", "Name: " + name + ", ID: " + id + ", Gender: " + gender + ", Birth: " + date);
+
+                        // Call the updateUI method with the obtained information
+                        updateUI(name, id, gender, date);
+                    } else {
+                        Log.e("ProfileStudent", "onDataChange failed: Snapshot does not exist");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Firebase Error", "Error getting user data", error.toException());
+                }
+            });
+        }
     }
 
 
@@ -202,7 +217,4 @@ public class ProfileStudent extends AppCompatActivity {
             }
         }
     }
-
-
-
 }

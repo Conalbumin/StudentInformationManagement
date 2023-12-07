@@ -20,6 +20,15 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
 
     private ArrayList<Student> studentList;
     private Context context;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     public AdapterStudent(Context context, ArrayList<Student> studentList) {
         this.context = context;
@@ -38,6 +47,12 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
         Student student = studentList.get(position);
         holder.studentName.setText(student.getName());
         holder.studentId.setText(student.getID());
+
+        holder.itemView.setOnClickListener(view -> {
+            if (mListener != null) {
+                mListener.onItemClick(position);
+            }
+        });
     }
 
     @Override

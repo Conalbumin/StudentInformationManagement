@@ -3,21 +3,21 @@ package com.example.studentinformationmanagement;
 import java.util.ArrayList;
 
 public class Certificate {
-    private ArrayList<String> name;
+    private String name;
     public Certificate() {
     }
 
     // Parameterized constructor
-    public Certificate(ArrayList<String> name) {
+    public Certificate(String name) {
         this.name = name;
     }
 
     // Getter and Setter
-    public ArrayList<String> getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(ArrayList<String> name) {
+    public void setName(String name) {
         this.name = name;
     }
 

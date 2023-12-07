@@ -54,8 +54,13 @@ public class ListCertificate extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Certificate> certificates = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Certificate certificate = snapshot.getValue(Certificate.class);
-                    certificates.add(certificate);
+                    // Check if the certificate is a string or an object
+                    if (snapshot.getValue() instanceof String) {
+                        certificates.add(new Certificate((String) snapshot.getValue()));
+                    } else {
+                        Certificate certificate = snapshot.getValue(Certificate.class);
+                        certificates.add(certificate);
+                    }
                 }
                 certificateAdapter.setStudentList(certificates);
             }

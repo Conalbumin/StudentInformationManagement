@@ -1,9 +1,10 @@
 package com.example.studentinformationmanagement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Student {
-    private ArrayList<String> Certificates;
+    private ArrayList<Certificate> Certificates;
     private String Gender;
     private String ID;
     private String Birth;
@@ -12,7 +13,7 @@ public class Student {
     // Constructors, getters, setters
 
     // Example constructor
-    public Student(String ID, String Name, String Birth, String Gender, ArrayList<String> Certificates) {
+    public Student(String ID, String Name, String Birth, String Gender, ArrayList<Certificate> Certificates) {
         this.ID = ID;
         this.Name = Name;
         this.Birth = Birth;
@@ -21,9 +22,39 @@ public class Student {
     }
 
     // Parameterized constructor
-    public Student(ArrayList<String> certificates) {
+    public Student(ArrayList<Certificate> certificates) {
         this.Certificates = certificates;
     }
+
+    public Student(Map<String, Object> data) {
+        this.Certificates = parseCertificates(data);
+        this.Gender = data.get("Gender").toString();
+        this.ID = data.get("ID").toString();
+        this.Birth = data.get("Birth").toString();
+        this.Name = data.get("Name").toString();
+    }
+
+    private ArrayList<Certificate> parseCertificates(Map<String, Object> data) {
+        ArrayList<Certificate> certificates = new ArrayList<>();
+
+        // Get the "Certificates" field
+        Object certificatesData = data.get("Certificates");
+
+        // Check if it's a list
+        if (certificatesData instanceof ArrayList) {
+            for (Object certData : (ArrayList<Object>) certificatesData) {
+                if (certData instanceof Map) {
+                    // Use the proper key ("name") to retrieve the certificate name
+                    Object certName = ((Map<String, Object>) certData).get("name");
+                    if (certName != null && certName instanceof String) {
+                        certificates.add(new Certificate((String) certName));
+                    }
+                }
+            }
+        }
+        return certificates;
+    }
+
 
     public Student() {
     }
@@ -62,11 +93,11 @@ public class Student {
         this.Gender = Gender;
     }
 
-    public ArrayList<String> getCertificates() {
+    public ArrayList<Certificate> getCertificates() {
         return Certificates;
     }
 
-    public void setCertificates(ArrayList<String> Certificates) {
+    public void setCertificates(ArrayList<Certificate> Certificates) {
         this.Certificates = Certificates;
     }
 

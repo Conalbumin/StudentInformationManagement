@@ -1,42 +1,62 @@
 [
   {
-    "cer1": "Microsoft Certified: Azure Fundamentals",
-    "cer2": "Cisco Certified Network Associate (CCNA)"
+    "Certificates": [
+      "Microsoft Certified: Azure Fundamentals",
+      "Cisco Certified Network Associate (CCNA)"
+    ]
   },
   {
-    "cer1": "Cisco Certified Network Associate (CCNA)",
-    "cer2": "Project Management Professional (PMP)"
+    "Certificates": [
+      "Cisco Certified Network Associate (CCNA)",
+      "Project Management Professional (PMP)"
+    ]
   },
   {
-    "cer1": "Project Management Professional (PMP)",
-    "cer2": "AWS Certified Solutions Architect"
+    "Certificates": [
+      "Project Management Professional (PMP)",
+      "AWS Certified Solutions Architect"
+    ]
   },
   {
-    "cer1": "Certified Ethical Hacker (CEH)",
-    "cer2": "AWS Certified Solutions Architect"
+    "Certificates": [
+      "Certified Ethical Hacker (CEH)",
+      "AWS Certified Solutions Architect"
+    ]
   },
   {
-    "cer1": "AWS Certified Solutions Architect",
-    "cer2": "Certified Ethical Hacker (CEH)"
+    "Certificates": [
+      "AWS Certified Solutions Architect",
+      "Certified Ethical Hacker (CEH)"
+    ]
   },
   {
-    "cer1": "Certified ScrumMaster (CSM)",
-    "cer2": "CompTIA Security+"
+    "Certificates": [
+      "Certified ScrumMaster (CSM)",
+      "CompTIA Security+"
+    ]
   },
   {
-    "cer1": "CompTIA Security+",
-    "cer2": "IL 8.0"
+    "Certificates": [
+      "CompTIA Security+",
+      "IL 8.0"
+    ]
   },
   {
-    "cer1": "Google Cloud Professional Cloud Architect",
-    "cer2": "TOEIC 890"
+    "Certificates": [
+      "Google Cloud Professional Cloud Architect",
+      "TOEIC 890"
+    ]
   },
   {
-    "cer1": "Adobe Certified Expert (ACE)",
-    "cer2": "MOS 950"
+    "Certificates": [
+      "Adobe Certified Expert (ACE)",
+      "MOS 950"
+    ]
   },
   {
-    "cer1": "Certified Information Systems Security Professional (CISSP)",
-    "cer2": "Aptis 180"
+    "Certificates": [
+      "Certified Information Systems Security Professional (CISSP)",
+      "Aptis 180"
+    ]
   }
 ]

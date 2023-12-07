@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ListStudent extends AppCompatActivity {
 
@@ -61,10 +62,27 @@ public class ListStudent extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Student> students = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Student student = snapshot.getValue(Student.class);
+                    Student student = new Student((Map<String, Object>) snapshot.getValue());
                     students.add(student);
                 }
                 studentAdapter.setStudentList(students);
+
+                // Add click listener for each student item
+                studentAdapter.setOnItemClickListener(new AdapterStudent.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Student selectedStudent = students.get(position);
+
+                        // Create an Intent to start the ProfileStudent activity
+                        Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
+
+                        // Pass the selected student data to the next activity
+                        intent.putExtra("selectedStudent", String.valueOf(selectedStudent));
+
+                        // Start the activity
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override
@@ -73,11 +91,7 @@ public class ListStudent extends AppCompatActivity {
             }
         });
 
-        icClose.setOnClickListener(view -> finish());
 
-//        itemStudent.setOnClickListener(view -> {
-//            Intent intent = new Intent(this, ProfileStudent.class);
-//            startActivity(intent);
-//        });
+        icClose.setOnClickListener(view -> finish());
     }
 }
