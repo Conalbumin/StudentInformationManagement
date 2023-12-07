@@ -136,7 +136,7 @@ public class ProfileUser extends AppCompatActivity {
 
         // Update age
         TextView ageTextView = age_layout.findViewById(R.id.age); // Replace with the actual ID of the age TextView
-        ageTextView.setText(String.valueOf(age)); // Convert age to String before setting it
+        ageTextView.setText("Age: " + String.valueOf(age)); // Convert age to String before setting it
 
         // Update phone number
         TextView phoneTextView = phone_layout.findViewById(R.id.phone); // Replace with the actual ID of the phone TextView

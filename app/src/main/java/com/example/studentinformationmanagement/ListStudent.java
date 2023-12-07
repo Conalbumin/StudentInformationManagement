@@ -72,14 +72,7 @@ public class ListStudent extends AppCompatActivity {
                     @Override
                     public void onItemClick(int position) {
                         Student selectedStudent = students.get(position);
-
-                        // Create an Intent to start the ProfileStudent activity
                         Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
-
-                        // Pass the selected student data to the next activity
-                        intent.putExtra("selectedStudent", String.valueOf(selectedStudent));
-
-                        // Start the activity
                         startActivity(intent);
                     }
                 });

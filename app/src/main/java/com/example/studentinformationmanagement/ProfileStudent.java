@@ -1,14 +1,10 @@
 package com.example.studentinformationmanagement;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,9 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,11 +21,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import android.net.Uri;
 
 import java.util.ArrayList;
 
@@ -42,12 +34,13 @@ public class ProfileStudent extends AppCompatActivity {
     private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
-    private DatabaseReference databaseReference;
+    private DatabaseReference studentRef;
     private FirebaseStorage storage;
     private CircleImageView avatar;
     private TextView id_fullName_TextView;
     private ImageView ic_close;
     private LinearLayout id_layout, gender_layout, date_layout, certificate_layout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +58,8 @@ public class ProfileStudent extends AppCompatActivity {
         date_layout = findViewById(R.id.date_layout);
         certificate_layout = findViewById(R.id.certificate_layout);
 
-        getInfoUser(); // Fetch and display user information
+//        String studentId = getIntent().getStringExtra("STUDENT_ID");
+        getInfoStudent(); // Fetch and display user information
 
         ic_close.setOnClickListener(view -> {
             finish(); // Close the activity
@@ -114,32 +108,33 @@ public class ProfileStudent extends AppCompatActivity {
         // Find the TextView in date_layout and set the birth date
         TextView dateTextView = date_layout.findViewById(R.id.date);
         dateTextView.setText("Birth Date: " + date);
-
-        // Find the TextView in certificate_layout and set the certificate
-        TextView certificateTextView = certificate_layout.findViewById(R.id.certificate);
-        certificateTextView.setText("Certificates");
     }
 
-    protected void getInfoUser(){
+    private void getInfoStudent() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child(user.getUid());
-            storage = FirebaseStorage.getInstance();
-            studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            String userId = user.getUid();
+
+            DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child("ID");
+            Query query = studentRef.orderByChild("ID").equalTo(userId);
+            Log.e("ProfileStudent", "StudentRef " + studentRef);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Log.e("ProfileStudent", "onDataChange called");
-                    if (snapshot.exists()) {
-                        String name = snapshot.child("Name").getValue(String.class);
-                        String id = snapshot.child("ID").getValue(String.class);
-                        String gender = snapshot.child("Gender").getValue(String.class);
-                        String date = snapshot.child("Birth").getValue(String.class);
-                        ArrayList<Certificate> certificates = snapshot.child("Certificates").getValue(ArrayList.class);
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Student student = snapshot.getValue(Student.class);
+                            Log.e("ProfileStudent", "DataSnapshot key: " + dataSnapshot.getKey());
 
-                        Log.e("ProfileStudent", "Name: " + name + ", ID: " + id + ", Gender: " + gender + ", Birth: " + date);
+                            // Log the student data to verify
+                            Log.e("ProfileStudent", "Student: " + student.toString());
 
-                        // Call the updateUI method with the obtained information
-                        updateUI(name, id, gender, date);
+                            // Call the updateUI method with the obtained information
+                            updateUI(student.getName(), student.getID(), student.getGender(), student.getBirth());
+                            break;  // Assuming there's only one matching student
+                        }
                     } else {
                         Log.e("ProfileStudent", "onDataChange failed: Snapshot does not exist");
                     }
@@ -147,12 +142,11 @@ public class ProfileStudent extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("Firebase Error", "Error getting user data", error.toException());
+                    Log.e("Firebase Error", "Error getting student data", error.toException());
                 }
             });
         }
     }
-
 
 
     @Override

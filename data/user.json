@@ -3,7 +3,7 @@
     "Email": "admin@email.com",
     "Name": "Manh Phi",
     "Age": 22,
-    "PhoneNumber": "0916 740 557",
+    "PhoneNumber": "0916740557",
     "Status": true,
     "Role": "admin"
   },
@@ -11,7 +11,7 @@
     "Email": "test@email.com",
     "Name": "Mason",
     "Age": 22,
-    "PhoneNumber": "0987 123 456",
+    "PhoneNumber": "0987123456",
     "Status": true,
     "Role": "Manager"
   },
@@ -19,7 +19,7 @@
     "Email": "user@email.com",
     "Name": "Tyson",
     "Age": 22,
-    "PhoneNumber": "0987 456 123",
+    "PhoneNumber": "0987456123",
     "Status": true,
     "Role": "Employee"
   }
