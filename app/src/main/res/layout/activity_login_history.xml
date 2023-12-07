@@ -26,10 +26,12 @@
         android:textColor="#2196F3"
         android:textSize="30sp" />
 
-    <include android:id="@+id/user_history"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHistory"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/loginHistory"
-        layout="@layout/item_user"/>
+        android:layout_marginTop="10dp"
+        tools:listitem="@layout/item_user_login" />
 
 </RelativeLayout>

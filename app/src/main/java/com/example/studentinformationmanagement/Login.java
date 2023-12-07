@@ -20,6 +20,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Login extends AppCompatActivity {
 
@@ -77,23 +83,39 @@ public class Login extends AppCompatActivity {
 
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
+                        progressBar.setVisibility(View.GONE); // hide progress bar
+
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.e("TAG", "signInWithEmail:success");
 
-                            Intent intent=new Intent(Login.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            // Get the user ID
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                String userId = user.getUid();
+
+                                // Save login timestamp under the user's ID
+                                saveUserHistory(userId);
+
+                                // Navigate to MainActivity
+                                Intent intent = new Intent(Login.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.e("TAG", "signInWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            finish();
                         }
                     });
-
-
         });
+    }
 
+    private void saveUserHistory(String userId) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // Save login timestamp under the user's ID
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        databaseReference.child("loginHistory").child(userId).push().setValue(timestamp);
     }
 }
