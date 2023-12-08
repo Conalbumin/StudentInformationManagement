@@ -89,14 +89,14 @@ public class StudentManagement extends AppCompatActivity {
         });
     }
 
-    public static void addNewUser(String email, String password, String name, int age, String phoneNumber, boolean status, String isAdmin) {
+    public static void addNewStudent(String email, String password, String name, int age, String phoneNumber, boolean status, String isAdmin) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
                             User userData = new User(email, name, age, phoneNumber, status, isAdmin);
-                            addUserToDatabase(email, userData);
+                            addStudentToDatabase(email, userData);
                         }
                     } else {
                         // Handle failure
@@ -104,11 +104,11 @@ public class StudentManagement extends AppCompatActivity {
                 });
     }
 
-    private static void addUserToDatabase(String email, User user) {
+    private static void addStudentToDatabase(String email, User user) {
         databaseReference.child(email.replace(".", ",")).setValue(user);
     }
 
-    public static void deleteExistingUser() {
+    public static void deleteExistingStudent() {
         FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
             user.delete()
@@ -120,7 +120,7 @@ public class StudentManagement extends AppCompatActivity {
         }
     }
 
-    public static void modifyUserInfo(String displayName, Uri photoUri) {
+    public static void modifyStudentInfo(String displayName, Uri photoUri) {
         FirebaseUser user = auth.getCurrentUser();
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()

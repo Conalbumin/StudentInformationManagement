@@ -31,7 +31,7 @@ public class ListStudent extends AppCompatActivity {
     private DatabaseReference studentRef;
     private AdapterStudent studentAdapter;
     private RecyclerView recyclerView;
-    private ImageView icClose;
+    private ImageView icClose, ic_delete_user;
     private SearchView searchBar;
     private TextView btnSortByName, btnSortByID;
     private LinearLayout itemStudent;
@@ -47,6 +47,7 @@ public class ListStudent extends AppCompatActivity {
         btnSortByName = findViewById(R.id.btnSortByName);
         btnSortByID = findViewById(R.id.btnSortByID);
         itemStudent = findViewById(R.id.item_student);
+        ic_delete_user = findViewById(R.id.ic_delete_user);
 
         recyclerView = findViewById(R.id.list_student);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,7 +85,23 @@ public class ListStudent extends AppCompatActivity {
             }
         });
 
+//        ic_delete_user.setOnClickListener(view -> {
+//            if (studentAdapter.getSelectedStudent() != null) {
+//                deleteStudent(studentAdapter.getSelectedStudent().getID());
+//            }
+//        });
 
         icClose.setOnClickListener(view -> finish());
+    }
+
+    private void deleteStudent(String studentId) {
+        DatabaseReference studentToDeleteRef = studentRef.child(studentId);
+        studentToDeleteRef.removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("DeleteStudent", "Student data deleted successfully");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DeleteStudent", "Error deleting student data", e);
+                });
     }
 }

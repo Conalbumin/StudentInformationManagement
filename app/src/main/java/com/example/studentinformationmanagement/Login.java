@@ -33,7 +33,6 @@ public class Login extends AppCompatActivity {
     private Button buttonLogin;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
-    private TextView registerNow;
     private ImageView closeIcon;
 
     @Override
@@ -58,15 +57,9 @@ public class Login extends AppCompatActivity {
         buttonLogin = findViewById(R.id.buttonLogin);
         mAuth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar);
-        registerNow = findViewById(R.id.registerNow);
         closeIcon = findViewById(R.id.ic_close);
 
         closeIcon.setOnClickListener(v -> finish());
-        registerNow.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), Register.class);
-            startActivity(intent);
-            finish();
-        });
 
         buttonLogin.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);

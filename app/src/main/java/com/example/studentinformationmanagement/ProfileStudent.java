@@ -137,8 +137,6 @@ public class ProfileStudent extends AppCompatActivity {
                         Log.e("ProfileStudent", "Student " + birth);
                         Log.e("ProfileStudent", "Student " + certificates);
 
-
-
                         // Call the updateUI method with the obtained information
                         updateUI(name, studentId, gender, birth);
                         break;  // Assuming there's only one matching student

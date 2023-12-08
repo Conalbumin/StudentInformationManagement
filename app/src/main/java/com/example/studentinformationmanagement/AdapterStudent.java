@@ -19,8 +19,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentViewHolder> {
 
     private ArrayList<Student> studentList;
+    private Student selectedStudent;
     private Context context;
     private OnItemClickListener mListener;
+
+    public void setSelectedStudent(Student student) {
+        selectedStudent = student;
+        notifyDataSetChanged();
+    }
+
+    public Student getSelectedStudent() {
+        return selectedStudent;
+    }
 
     public interface OnItemClickListener {
         void onItemClick(int position);

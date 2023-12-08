@@ -2,164 +2,61 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    style="@style/loginParent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/ic_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="370dp"
-        android:layout_marginTop="10dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+    <ScrollView style="@style/parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ic_close"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/frame"
-        android:gravity="center"
-        android:text="Add a new user"
-        android:textColor="#2196F3"
-        android:textSize="30dp" />
+        <RelativeLayout style="@style/parent">
 
-    <LinearLayout
-        android:id="@+id/userName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/frame"
-        android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:weightSum="12">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="Username"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+                <LinearLayout
+                    style="@style/parent"
+                    android:layout_weight="3"
+                    android:background="@drawable/login_shape_bk"
+                    android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/txtUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp" />
-    </LinearLayout>
+                    <ImageView
+                        style="@style/parent"
+                        android:background="@drawable/ic_login_bk"
+                        android:contentDescription="login background" />
+                </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/userAge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userName"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/frame"
-        android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/loginContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="30dp"
+                android:visibility="visible"
+                android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="Age"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+                <include
+                    android:id="@+id/register"
+                    layout="@layout/layout_add_user" />
+            </LinearLayout>
 
-        <EditText
-            android:id="@+id/txtUserAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/userPhone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userAge"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/frame"
-        android:orientation="vertical">
+            <ImageView
+                android:id="@+id/ic_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="370dp"
+                android:layout_marginTop="10dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="Phone"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/txtUserPhone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/userRole"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userPhone"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/frame"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="Role"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/txtUserRole"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/userStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userRole"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/frame"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="Status"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <Switch
-            android:id="@+id/txtUserStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginLeft="5dp"
-            android:clickable="true" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnAddUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userStatus"
-        android:layout_marginLeft="40sp"
-        android:layout_marginTop="20sp"
-        android:layout_marginRight="40sp"
-        android:background="@drawable/login_button_bk"
-        android:text="Add"
-        android:textColor="@color/white"
-        android:textSize="18dp" />
+    </ScrollView>
 
 </RelativeLayout>

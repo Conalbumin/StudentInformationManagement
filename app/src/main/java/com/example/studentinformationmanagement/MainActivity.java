@@ -106,22 +106,14 @@ public class MainActivity extends AppCompatActivity {
         ic_add_user.setOnClickListener(view -> {
             Intent intent = new Intent(this, AddNewUser.class);
             startActivity(intent);
-            // Call the method to add a new user
-//            UserManagement.addNewUser();
         });
-
+//
 //        ic_delete_user.setOnClickListener(view -> {
-////            UserManagement.deleteExistingUser();
+//            UserManagement.deleteExistingUser();
 //        });
 
         searchBar.setOnClickListener(view -> {
-
         });
 
-//        item_user.setOnClickListener(view -> {
-//            Intent intent = new Intent(this, ProfileUser.class);
-//            startActivity(intent);
-//            finish();
-//        });
     }
 }

@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddNewUser extends AppCompatActivity {
     private ImageView ic_close;
-    private EditText txtUsername, txtUserAge, txtUserPhone, txtUserRole;
+    private EditText txtUsername, txtUserAge, txtUserPhone, txtUserRole, editTextEmail, editTextPassword;
     private Switch txtUserStatus;
     private Button btnAddUser;
 
@@ -22,6 +22,8 @@ public class AddNewUser extends AppCompatActivity {
 
         // Initialize UI elements
         ic_close = findViewById(R.id.ic_close);
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPassword = findViewById(R.id.editTextPassword);
         txtUsername = findViewById(R.id.txtUsername);
         txtUserAge = findViewById(R.id.txtUserAge);
         txtUserPhone = findViewById(R.id.txtUserPhone);
@@ -29,15 +31,24 @@ public class AddNewUser extends AppCompatActivity {
         txtUserStatus = findViewById(R.id.txtUserStatus);
         btnAddUser = findViewById(R.id.btnAddUser);
 
-        // Set onClickListener for close button (replace with your actual click logic)
+        // Set onClickListener for close button
         ic_close.setOnClickListener(view -> {
-            // Handle ic_close click
             finish(); // Close the activity
         });
 
-        // Set onClickListener for add user button (replace with your actual click logic)
+        // Set onClickListener for add user button
         btnAddUser.setOnClickListener(view -> {
-            // Handle btnAddUser click
+            // Retrieve data from UI elements
+            String email = editTextEmail.getText().toString();
+            String password = editTextPassword.getText().toString();
+            String name = txtUsername.getText().toString();
+            int age = Integer.parseInt(txtUserAge.getText().toString());
+            String phoneNumber = txtUserPhone.getText().toString();
+            String role = txtUserRole.getText().toString();
+            boolean status = txtUserStatus.isChecked();
+
+            UserManagement.addNewUser(email, password, name, age, phoneNumber, status, role);
+            finish();
         });
     }
 }

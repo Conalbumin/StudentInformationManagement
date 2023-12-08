@@ -27,18 +27,19 @@ import java.util.Scanner;
 public class UserManagement extends AppCompatActivity {
 
     private static final String TAG = "UserManagement";
-    private static FirebaseAuth auth;
+    private static FirebaseAuth auth = FirebaseAuth.getInstance();
     private static DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    private static DatabaseReference userRef = databaseReference.child("user");
+    private static DatabaseReference userRef = databaseReference.child("users");
 
-    public static void addNewUser(String email, String password, String name, int age, String phoneNumber, boolean status, String isAdmin) {
+    public static void addNewUser(String email, String password, String name, int age, String phoneNumber, boolean status, String role) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
-                            User userData = new User(email, name, age, phoneNumber, status, isAdmin);
-                            addUserToDatabase(email, userData);
+                            // Update user profile in authentication
+                            User userData = new User(email, name, age, phoneNumber, status, role);
+                            addUserToDatabase(user.getUid(), userData);
                         }
                     } else {
                         // Handle failure
@@ -46,9 +47,18 @@ public class UserManagement extends AppCompatActivity {
                 });
     }
 
-    private static void addUserToDatabase(String email, User user) {
-        databaseReference.child(email.replace(".", ",")).setValue(user);
+    private static void addUserToDatabase(String userId, User user) {
+        userRef.child(userId).setValue(user)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "User added to database successfully.");
+                    } else {
+                        // Handle failure
+                        Log.e(TAG, "Failed to add user to database: " + task.getException());
+                    }
+                });
     }
+
 
     public static void deleteExistingUser() {
         FirebaseUser user = auth.getCurrentUser();
@@ -75,30 +85,6 @@ public class UserManagement extends AppCompatActivity {
                         Log.d("TAG", "User profile updated.");
                     }
                 });
-    }
-
-    public static void viewLoginHistory() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("\nViewing login history of a user:");
-        System.out.print("Enter the email of the user: ");
-        String emailToView = scanner.nextLine();
-
-        try {
-            // Get the firebase auth instance
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-
-            // Fetch the user with the specified email address
-            FirebaseUser user = auth.getCurrentUser();
-
-            // Display user's last sign-in time if the user exists
-            if (user != null) {
-                System.out.println("Last Sign-In Time: " + user.getMetadata().getLastSignInTimestamp());
-            } else {
-                System.out.println("User with email " + emailToView + " does not exist.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void readUserDataFromFirebase() {

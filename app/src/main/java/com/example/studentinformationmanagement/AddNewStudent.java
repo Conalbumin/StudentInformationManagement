@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,9 +33,20 @@ public class AddNewStudent extends AppCompatActivity {
             finish(); // Close the activity
         });
 
-        // Set onClickListener for add student button (replace with your actual click logic)
+        // Set onClickListener for add student button
         btnAddStudent.setOnClickListener(view -> {
-            // Handle btnAddStudent click
+            // Retrieve data from UI elements
+            String studentId = txtStudentId.getText().toString();
+            String studentName = txtStudentName.getText().toString();
+            String userGender = txtUserGender.getText().toString();
+            String userDate = txtUserDate.getText().toString();
+            String studentCer = txtStudentCer.getText().toString();
+
+            // Call the method to add a new student
+//            StudentManagement.addNewStudent(studentId, studentName, userGender, userDate, studentCer);
+
+            // Close the activity
+            finish();
         });
     }
 }
