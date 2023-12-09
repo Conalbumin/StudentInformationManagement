@@ -40,7 +40,7 @@ public class ListCertificate extends AppCompatActivity {
         ic_delete_user = findViewById(R.id.ic_delete_user);
         certificate = findViewById(R.id.certificate);
 
-        recyclerView = findViewById(R.id.list_student);
+        recyclerView = findViewById(R.id.listviewCer);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseReference = FirebaseDatabase.getInstance().getReference();

@@ -58,7 +58,6 @@ public class ProfileStudent extends AppCompatActivity {
         date_layout = findViewById(R.id.date_layout);
         certificate_layout = findViewById(R.id.certificate_layout);
 
-//        String studentId = getIntent().getStringExtra("STUDENT_ID");
         getInfoStudent(); // Fetch and display user information
 
         ic_close.setOnClickListener(view -> {
