@@ -68,24 +68,15 @@ public class ListStudent extends AppCompatActivity {
                 }
                 studentAdapter.setStudentList(students);
 
-                // Add click listener for each student item
-                // Inside onDataChange method
-                studentAdapter.setOnItemClickListener(new AdapterStudent.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Student selectedStudent = students.get(position);
-                        Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
+                studentAdapter.setOnItemClickListener(position -> {
+                    Student selectedStudent = studentAdapter.getStudent(position);
+                    Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
 
-                        // Pass the selected student's information to the ProfileStudent activity
-                        intent.putExtra("STUDENT_ID", selectedStudent.getID());
-                        intent.putExtra("STUDENT_NAME", selectedStudent.getName());
-                        intent.putExtra("STUDENT_GENDER", selectedStudent.getGender());
-                        intent.putExtra("STUDENT_BIRTH", selectedStudent.getBirth());
-                        // Add other necessary information...
-
-                        startActivity(intent);
-                    }
+                    // Pass the selected student's ID to the ProfileStudent activity
+                    intent.putExtra("STUDENT_ID", selectedStudent.getID());
+                    startActivity(intent);
                 });
+
 
             }
 

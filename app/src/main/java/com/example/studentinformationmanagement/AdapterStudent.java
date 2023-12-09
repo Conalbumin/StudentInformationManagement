@@ -28,8 +28,13 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
         notifyDataSetChanged();
     }
 
-    public Student getSelectedStudent() {
-        return selectedStudent;
+    public void setStudentList(ArrayList<Student> studentList) {
+        this.studentList = studentList;
+        notifyDataSetChanged();
+    }
+
+    public Student getStudent(int position) {
+        return studentList.get(position);
     }
 
     public interface OnItemClickListener {
@@ -68,11 +73,6 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
     @Override
     public int getItemCount() {
         return studentList.size();
-    }
-
-    public void setStudentList(ArrayList<Student> studentList) {
-        this.studentList = studentList;
-        notifyDataSetChanged();
     }
 
     public static class StudentViewHolder extends RecyclerView.ViewHolder {
