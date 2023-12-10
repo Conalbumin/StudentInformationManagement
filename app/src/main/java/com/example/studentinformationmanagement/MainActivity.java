@@ -107,10 +107,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddNewUser.class);
             startActivity(intent);
         });
-//
-//        ic_delete_user.setOnClickListener(view -> {
-//            UserManagement.deleteExistingUser();
-//        });
 
         searchBar.setOnClickListener(view -> {
         });

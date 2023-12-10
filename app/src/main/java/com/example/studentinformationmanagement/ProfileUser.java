@@ -1,12 +1,16 @@
 package com.example.studentinformationmanagement;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +66,26 @@ public class ProfileUser extends AppCompatActivity {
 
         getInfoUser(); // Fetch and display user information
 
+        age_layout.setOnClickListener(view -> {
+            // Handle click on age_layout
+            showEditDialog("Age", "Enter new age", age_layout, id_fullName_TextView.getText().toString());
+        });
+
+        phone_layout.setOnClickListener(view -> {
+            // Handle click on phone_layout
+            showEditDialog("Phone", "Enter new phone number", phone_layout, id_fullName_TextView.getText().toString());
+        });
+
+        role_layout.setOnClickListener(view -> {
+            // Handle click on role_layout
+            showEditDialog("Role", "Enter new role", role_layout, id_fullName_TextView.getText().toString());
+        });
+
+        id_fullName_TextView.setOnClickListener(view -> {
+            // Handle click on id_fullName_TextView
+            showEditDialog("Name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString());
+        });
+
         logout_layout.setOnClickListener(view -> {
             auth.signOut();
             Toast.makeText(ProfileUser.this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -104,6 +128,32 @@ public class ProfileUser extends AppCompatActivity {
         });
     }
 
+    private void showEditDialog(String field, String hint, View view, String currentValue) {
+        // Implement a custom dialog to edit the user information
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit " + field);
+        builder.setMessage(hint);
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint(currentValue);
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newValue = input.getText().toString();
+            updateUIAndFirebase(field, newValue);
+
+            // Update the corresponding TextView with the new value
+            if (view instanceof TextView) {
+                ((TextView) view).setText(newValue);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
     protected void getInfoUser(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -113,10 +163,10 @@ public class ProfileUser extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        String name = snapshot.child("Name").getValue(String.class);
-                        int age = snapshot.child("Age").getValue(Integer.class);
-                        String phone = snapshot.child("PhoneNumber").getValue(String.class);
-                        String role = snapshot.child("Role").getValue(String.class);
+                        String name = snapshot.child("name").getValue(String.class);
+                        int age = snapshot.child("age").getValue(Integer.class);
+                        String phone = snapshot.child("phoneNumber").getValue(String.class);
+                        String role = snapshot.child("role").getValue(String.class);
 
                         // Call the updateUI method with the obtained information
                         updateUI(name, age, phone, role);
@@ -146,6 +196,49 @@ public class ProfileUser extends AppCompatActivity {
         TextView roleTextView = role_layout.findViewById(R.id.role); // Replace with the actual ID of the role TextView
         roleTextView.setText(role);
     }
+
+    private void updateUIAndFirebase(String field, String newValue) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
+            // Update the specific field in Firebase Realtime Database
+            userRef.child(field).setValue(newValue)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("Firebase Update", field + " updated successfully.");
+                        } else {
+                            Log.e("Firebase Error", "Error updating " + field, task.getException());
+                        }
+                    });
+
+            // Update the local user object with the new value
+            if ("Name".equals(field)) {
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(newValue)
+                        .build();
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("Firebase Update", "User display name updated successfully.");
+                            } else {
+                                Log.e("Firebase Error", "Error updating user display name", task.getException());
+                            }
+                        });
+            } else if ("Age".equals(field)) {
+                // You may not be able to update age directly in Firebase Authentication
+            } else if ("PhoneNumber".equals(field)) {
+                // You may not be able to update phone number directly in Firebase Authentication
+            } else if ("Role".equals(field)) {
+                // You may not be able to update role directly in Firebase Authentication
+            }
+
+            // Update the UI
+            getInfoUser(); // Refresh user information from Firebase Realtime Database
+        }
+    }
+
+
 
 
     // Add onActivityResult method to handle the result of the image picker

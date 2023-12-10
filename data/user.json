@@ -1,26 +1,26 @@
 {
-  "khhlVkshKsf4RbwWlIHMSI0UaiW2": {
-    "Email": "admin@email.com",
-    "Name": "Manh Phi",
-    "Age": 22,
-    "PhoneNumber": "0916740557",
-    "Status": true,
-    "Role": "admin"
-  },
-  "tE0YxyvorQPMVya7VUDD6YLVEbk2": {
-    "Email": "test@email.com",
-    "Name": "Mason",
-    "Age": 22,
-    "PhoneNumber": "0987123456",
-    "Status": true,
-    "Role": "Manager"
+  "kVkwybyAGFNpdY2oXa1KAFLqXTi2": {
+    "email": "asdf@gmail.com",
+    "name": "Asdf",
+    "age": 23,
+    "phoneNumber": "0923746154",
+    "status": true,
+    "role": "admin"
   },
   "gs2ojOfXiNXO5zNwb9MdMJWVBv23": {
-    "Email": "user@email.com",
-    "Name": "Tyson",
-    "Age": 22,
-    "PhoneNumber": "0987456123",
-    "Status": true,
-    "Role": "Employee"
+    "email": "user@gmail.com",
+    "name": "Tyson",
+    "age": 22,
+    "phoneNumber": "0987456123",
+    "status": true,
+    "role": "Employee"
+  },
+  "5gdUTo3WDxa2UWvXLW1JKHmmO1I2": {
+    "email": "qwert@gmail.com",
+    "name": "Qwert",
+    "age": 22,
+    "phoneNumber": "0914948736",
+    "status": true,
+    "role": "Employee"
   }
 }
