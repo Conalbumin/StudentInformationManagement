@@ -119,17 +119,22 @@ public class ProfileUser extends AppCompatActivity {
             startActivity(intent);
         });
 
-        avatar.setOnClickListener(view -> {
-            Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
-        });
+        age_layout.setOnClickListener(view -> showEditDialog("Age", "Enter new age", age_layout, id_fullName_TextView.getText().toString()));
+        phone_layout.setOnClickListener(view -> showEditDialog("Phone", "Enter new phone number", phone_layout, id_fullName_TextView.getText().toString()));
+        role_layout.setOnClickListener(view -> showEditDialog("Role", "Enter new role", role_layout, id_fullName_TextView.getText().toString()));
+        id_fullName_TextView.setOnClickListener(view -> showEditDialog("Name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString()));
+        avatar.setOnClickListener(view -> selectImage());
+    }
+
+    private void selectImage() {
+        Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
     }
 
     private void showEditDialog(String field, String hint, View view, String currentValue) {
-        // Implement a custom dialog to edit the user information
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit " + field);
         builder.setMessage(hint);
@@ -141,9 +146,8 @@ public class ProfileUser extends AppCompatActivity {
 
         builder.setPositiveButton("Save", (dialog, which) -> {
             String newValue = input.getText().toString();
-            updateUIAndFirebase(field, newValue);
+            updateUserInfo(field, newValue);
 
-            // Update the corresponding TextView with the new value
             if (view instanceof TextView) {
                 ((TextView) view).setText(newValue);
             }
@@ -196,14 +200,12 @@ public class ProfileUser extends AppCompatActivity {
         TextView roleTextView = role_layout.findViewById(R.id.role); // Replace with the actual ID of the role TextView
         roleTextView.setText(role);
     }
-
-    private void updateUIAndFirebase(String field, String newValue) {
+    private void updateUserInfo(String field, String newValue) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
-            // Update the specific field in Firebase Realtime Database
-            userRef.child(field).setValue(newValue)
+            userRef.child("name").setValue(newValue)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("Firebase Update", field + " updated successfully.");
@@ -213,33 +215,37 @@ public class ProfileUser extends AppCompatActivity {
                     });
 
             // Update the local user object with the new value
-            if ("Name".equals(field)) {
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(newValue)
-                        .build();
-                user.updateProfile(profileUpdates)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("Firebase Update", "User display name updated successfully.");
-                            } else {
-                                Log.e("Firebase Error", "Error updating user display name", task.getException());
-                            }
-                        });
-            } else if ("Age".equals(field)) {
-                // You may not be able to update age directly in Firebase Authentication
-            } else if ("PhoneNumber".equals(field)) {
-                // You may not be able to update phone number directly in Firebase Authentication
-            } else if ("Role".equals(field)) {
-                // You may not be able to update role directly in Firebase Authentication
+            if ("name".equals(field)) {
+                updateDisplayName(newValue);
+            } else if ("age".equals(field)) {
+                // Handle age update if needed
+            } else if ("phoneNumber".equals(field)) {
+                // Handle phone number update if needed
+            } else if ("role".equals(field)) {
+                // Handle role update if needed
             }
 
             // Update the UI
-            getInfoUser(); // Refresh user information from Firebase Realtime Database
+            getInfoUser();
         }
     }
 
-
-
+    private void updateDisplayName(String newName) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(newName)
+                    .build();
+            user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("Firebase Update", "User display name updated successfully.");
+                        } else {
+                            Log.e("Firebase Error", "Error updating user display name", task.getException());
+                        }
+                    });
+        }
+    }
 
     // Add onActivityResult method to handle the result of the image picker
     @Override

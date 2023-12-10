@@ -42,7 +42,7 @@ public class UserManagement extends AppCompatActivity {
                             addUserToDatabase(user.getUid(), userData);
                         }
                     } else {
-                        // Handle failure
+                        Log.e(TAG, "Failed to add user to database: " + task.getException());
                     }
                 });
     }
@@ -72,41 +72,4 @@ public class UserManagement extends AppCompatActivity {
         }
     }
 
-    public void modifyUserInfo(String displayName, Uri photoUri) {
-        FirebaseUser user = auth.getCurrentUser();
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(displayName)
-                .setPhotoUri(photoUri)
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("TAG", "User profile updated.");
-                    }
-                });
-    }
-
-    public static void readUserDataFromFirebase() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Iterate through each user in the "users" node
-                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                        // Retrieve user information
-                        User user = dataSnapshot.getValue(User.class);
-                    }
-                } else {
-                    System.out.println("No users found");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Error reading user information: " + databaseError.getMessage());
-            }
-        });
-    }
 }
