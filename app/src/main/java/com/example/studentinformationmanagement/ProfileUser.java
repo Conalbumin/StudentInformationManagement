@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -67,22 +68,18 @@ public class ProfileUser extends AppCompatActivity {
         getInfoUser(); // Fetch and display user information
 
         age_layout.setOnClickListener(view -> {
-            // Handle click on age_layout
             showEditDialog("Age", "Enter new age", age_layout, id_fullName_TextView.getText().toString());
         });
 
         phone_layout.setOnClickListener(view -> {
-            // Handle click on phone_layout
             showEditDialog("Phone", "Enter new phone number", phone_layout, id_fullName_TextView.getText().toString());
         });
 
         role_layout.setOnClickListener(view -> {
-            // Handle click on role_layout
             showEditDialog("Role", "Enter new role", role_layout, id_fullName_TextView.getText().toString());
         });
 
         id_fullName_TextView.setOnClickListener(view -> {
-            // Handle click on id_fullName_TextView
             showEditDialog("Name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString());
         });
 
@@ -205,24 +202,28 @@ public class ProfileUser extends AppCompatActivity {
         if (user != null) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
-            userRef.child("name").setValue(newValue)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("Firebase Update", field + " updated successfully.");
-                        } else {
-                            Log.e("Firebase Error", "Error updating " + field, task.getException());
-                        }
-                    });
-
-            // Update the local user object with the new value
-            if ("name".equals(field)) {
-                updateDisplayName(newValue);
-            } else if ("age".equals(field)) {
-                // Handle age update if needed
-            } else if ("phoneNumber".equals(field)) {
-                // Handle phone number update if needed
-            } else if ("role".equals(field)) {
-                // Handle role update if needed
+            Log.e("TAG", String.valueOf(userRef));
+            Log.e("TAG", field);
+            switch (field.toLowerCase()) {
+                case "name":
+                    userRef.child("name").setValue(newValue);
+                    updateDisplayName(newValue);
+                    break;
+                case "age":
+                    userRef.child("age").setValue(Integer.parseInt(newValue));
+                    updateAge(Integer.parseInt(newValue));
+                    break;
+                case "phone":
+                    userRef.child("phoneNumber").setValue(newValue);
+                    updatePhone(newValue);
+                    break;
+                case "role":
+                    updateRole(newValue);
+                    userRef.child("role").setValue(newValue);
+                    break;
+                default:
+                    // Handle the default case or log an error
+                    return;
             }
 
             // Update the UI
@@ -245,6 +246,57 @@ public class ProfileUser extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void updateAge(int newAge) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
+        // Update the role in Realtime Database
+        userRef.child("age").setValue(newAge)
+                .addOnCompleteListener(task -> {
+                    handleUpdateCompletion("age", task);
+                    // Now, you can proceed with other updates or refreshing the UI
+                    getInfoUser();
+                });
+    }
+
+    private void updateRole(String newRole) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
+        // Update the role in Realtime Database
+        userRef.child("role").setValue(newRole)
+                .addOnCompleteListener(task -> {
+                    handleUpdateCompletion("role", task);
+                    // Now, you can proceed with other updates or refreshing the UI
+                    getInfoUser();
+                });
+    }
+
+    private void handleUpdateCompletion(String field, Task<Void> task) {
+        if (task.isSuccessful()) {
+            Log.d("Firebase Update", "User " + field + " updated in Realtime Database successfully.");
+        } else {
+            Log.e("Firebase Error", "Error updating user " + field + " in Realtime Database", task.getException());
+        }
+
+        // Now, you can proceed with other updates or refreshing the UI
+        getInfoUser();
+    }
+
+
+    private void updatePhone(String newPhone) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
+        // Update the role in Realtime Database
+        userRef.child("phoneNumber").setValue(newPhone)
+                .addOnCompleteListener(task -> {
+                    handleUpdateCompletion("phoneNumber", task);
+                    // Now, you can proceed with other updates or refreshing the UI
+                    getInfoUser();
+                });
     }
 
     // Add onActivityResult method to handle the result of the image picker
