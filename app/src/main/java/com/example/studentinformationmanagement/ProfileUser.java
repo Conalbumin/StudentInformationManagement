@@ -2,6 +2,7 @@ package com.example.studentinformationmanagement;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,8 +34,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import android.net.Uri;
+
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,10 +49,12 @@ public class ProfileUser extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
     private FirebaseStorage storage;
+    private StorageReference storageReference;
     private CircleImageView avatar;
     private TextView id_fullName_TextView;
     private LinearLayout role_layout, age_layout, phone_layout, logout_layout, loginHistory;
     private AppCompatButton userBtn, studentBtn, profileBtn;
+    private String userId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +63,10 @@ public class ProfileUser extends AppCompatActivity {
 
         // Initialize FirebaseAuth
         auth = FirebaseAuth.getInstance();
+
+        // Initialize Firebase Storage
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
 
         // Initialize views
         avatar = findViewById(R.id.id_profile_image);
@@ -66,22 +81,6 @@ public class ProfileUser extends AppCompatActivity {
         profileBtn = findViewById(R.id.profileBtn);
 
         getInfoUser(); // Fetch and display user information
-
-        age_layout.setOnClickListener(view -> {
-            showEditDialog("Age", "Enter new age", age_layout, id_fullName_TextView.getText().toString());
-        });
-
-        phone_layout.setOnClickListener(view -> {
-            showEditDialog("Phone", "Enter new phone number", phone_layout, id_fullName_TextView.getText().toString());
-        });
-
-        role_layout.setOnClickListener(view -> {
-            showEditDialog("Role", "Enter new role", role_layout, id_fullName_TextView.getText().toString());
-        });
-
-        id_fullName_TextView.setOnClickListener(view -> {
-            showEditDialog("Name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString());
-        });
 
         logout_layout.setOnClickListener(view -> {
             auth.signOut();
@@ -120,16 +119,41 @@ public class ProfileUser extends AppCompatActivity {
         phone_layout.setOnClickListener(view -> showEditDialog("Phone", "Enter new phone number", phone_layout, id_fullName_TextView.getText().toString()));
         role_layout.setOnClickListener(view -> showEditDialog("Role", "Enter new role", role_layout, id_fullName_TextView.getText().toString()));
         id_fullName_TextView.setOnClickListener(view -> showEditDialog("Name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString()));
-        avatar.setOnClickListener(view -> selectImage());
+        avatar.setOnClickListener(view -> {
+            selectImage();
+        });
     }
 
     private void selectImage() {
+        Log.e("Avatar Click", "Avatar clicked. Starting image selection...");
+
         Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
     }
+
+    private void showConfirmationDialog(Uri selectedImage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Do you want to change the profile picture?");
+
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            // User confirmed, proceed with image upload
+            Log.e("Avatar Click", "Avatar clicked yes");
+
+            // Convert Uri to String
+            uploadImage(userId, selectedImage); // Assuming you have userId available
+        });
+
+        builder.setNegativeButton("No", (dialog, which) -> {
+            // User canceled, do nothing
+        });
+
+        builder.show();
+    }
+
 
     private void showEditDialog(String field, String hint, View view, String currentValue) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -155,9 +179,10 @@ public class ProfileUser extends AppCompatActivity {
         builder.show();
     }
 
-    protected void getInfoUser(){
+    protected void getInfoUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
+            userId = user.getUid(); // Store the user ID
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
             storage = FirebaseStorage.getInstance();
             userRef.addValueEventListener(new ValueEventListener() {
@@ -185,18 +210,16 @@ public class ProfileUser extends AppCompatActivity {
     private void updateUI(String name, int age, String phoneNumber, String role) {
         id_fullName_TextView.setText(name);
 
-        // Update age
-        TextView ageTextView = age_layout.findViewById(R.id.age); // Replace with the actual ID of the age TextView
-        ageTextView.setText("Age: " + String.valueOf(age)); // Convert age to String before setting it
+        TextView ageTextView = age_layout.findViewById(R.id.age);
+        ageTextView.setText("Age: " + age);
 
-        // Update phone number
-        TextView phoneTextView = phone_layout.findViewById(R.id.phone); // Replace with the actual ID of the phone TextView
+        TextView phoneTextView = phone_layout.findViewById(R.id.phone);
         phoneTextView.setText(phoneNumber);
 
-        // Update role (assuming you have a TextView for displaying the role)
-        TextView roleTextView = role_layout.findViewById(R.id.role); // Replace with the actual ID of the role TextView
+        TextView roleTextView = role_layout.findViewById(R.id.role);
         roleTextView.setText(role);
     }
+
     private void updateUserInfo(String field, String newValue) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -229,6 +252,17 @@ public class ProfileUser extends AppCompatActivity {
             // Update the UI
             getInfoUser();
         }
+    }
+
+    private void handleUpdateCompletion(String field, Task<Void> task) {
+        if (task.isSuccessful()) {
+            Log.d("Firebase Update", "User " + field + " updated in Realtime Database successfully.");
+        } else {
+            Log.e("Firebase Error", "Error updating user " + field + " in Realtime Database", task.getException());
+        }
+
+        // Now, you can proceed with other updates or refreshing the UI
+        getInfoUser();
     }
 
     private void updateDisplayName(String newName) {
@@ -274,18 +308,6 @@ public class ProfileUser extends AppCompatActivity {
                 });
     }
 
-    private void handleUpdateCompletion(String field, Task<Void> task) {
-        if (task.isSuccessful()) {
-            Log.d("Firebase Update", "User " + field + " updated in Realtime Database successfully.");
-        } else {
-            Log.e("Firebase Error", "Error updating user " + field + " in Realtime Database", task.getException());
-        }
-
-        // Now, you can proceed with other updates or refreshing the UI
-        getInfoUser();
-    }
-
-
     private void updatePhone(String newPhone) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
@@ -306,42 +328,101 @@ public class ProfileUser extends AppCompatActivity {
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE && data != null) {
-                // Use the onSelectFromGalleryResult method to handle the selected image
-                onSelectFromGalleryResult(data);
+                // Show the confirmation dialog before proceeding with image upload
+                showConfirmationDialog(data.getData());
             }
         }
     }
 
-    private void onSelectFromGalleryResult(Intent data) {
-        if (data != null) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
+    private void uploadImage(String userId, Uri selectedImage) {
+        if (selectedImage != null) {
+            Log.e("Avatar Click", "Yes. " + selectedImage);
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
 
-                // Update the user's profile picture on Firebase Authentication
-                FirebaseUser user = auth.getCurrentUser();
-                UserProfileChangeRequest avatarUpdate = new UserProfileChangeRequest.Builder()
-                        .setPhotoUri(selectedImage)
-                        .build();
+            StorageReference ref = storageReference.child("profile_images/" + userId + "/profile_picture.jpg");
+            ref.putFile(selectedImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-                user.updateProfile(avatarUpdate)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Log.d("TAG", "Avatar updated.");
+                            // Get the download URL of the uploaded image
+                            Task<Uri> downloadUriTask = ref.getDownloadUrl();
+                            downloadUriTask.addOnSuccessListener(uri -> {
+                                // Update the user's profile image URL directly in Firebase Storage
+                                updateUserProfileImageUrl(uri.toString());
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileUser.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
+    }
+
+    private void loadProfileImage(String userId) {
+        StorageReference profileImageRef = storageReference.child("profile_images/" + userId + "/profile_picture.jpg");
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            // Load the image using the URL (e.g., with Glide or Picasso)
+            Glide.with(ProfileUser.this).load(uri.toString()).into(avatar);
+        }).addOnFailureListener(e -> {
+            // Handle failure
+        });
+    }
+
+
+    private void updateUserProfileImageUrl(String imageUrl) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(Uri.parse(imageUrl))
+                    .build();
+
+            user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("Firebase Update", "User profile image URL updated successfully.");
+
+                            // Now, you need to fetch the updated user information
+                            FirebaseUser updatedUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                            if (updatedUser != null) {
+                                // Get the updated display name and photo URL
+                                String updatedDisplayName = updatedUser.getDisplayName();
+                                Uri updatedPhotoUrl = updatedUser.getPhotoUrl();
+
+                                // You can use these values to update your UI or perform other tasks
+                                Log.d("Updated Display Name", updatedDisplayName);
+                                Log.d("Updated Photo URL", String.valueOf(updatedPhotoUrl));
+
+                                // Load and display the updated profile image
+                                loadProfileImage(userId);
+
+                                // Proceed with other updates or refreshing the UI
+                                getInfoUser();
                             }
-                        });
-
-                // Update the CircleImageView in your layout with the new image
-                avatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-            }
+                        } else {
+                            Log.e("Firebase Error", "Error updating user profile image URL", task.getException());
+                            Toast.makeText(ProfileUser.this, "Failed to update profile image URL", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
+
 }
