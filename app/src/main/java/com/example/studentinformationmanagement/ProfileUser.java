@@ -345,26 +345,20 @@ public class ProfileUser extends AppCompatActivity {
 
             StorageReference ref = storageReference.child("profile_images/" + userId + "/profile_picture.jpg");
             ref.putFile(selectedImage)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(ProfileUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                    .addOnSuccessListener(taskSnapshot -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(ProfileUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-                            // Get the download URL of the uploaded image
-                            Task<Uri> downloadUriTask = ref.getDownloadUrl();
-                            downloadUriTask.addOnSuccessListener(uri -> {
-                                // Update the user's profile image URL directly in Firebase Storage
-                                updateUserProfileImageUrl(uri.toString());
-                            });
-                        }
+                        // Get the download URL of the uploaded image
+                        Task<Uri> downloadUriTask = ref.getDownloadUrl();
+                        downloadUriTask.addOnSuccessListener(uri -> {
+                            // Update the user's profile image URL directly in Firebase Storage
+                            updateUserProfileImageUrl(uri.toString());
+                        });
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(ProfileUser.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(ProfileUser.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override

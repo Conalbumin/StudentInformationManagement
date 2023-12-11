@@ -1,62 +1,50 @@
 [
   {
-    "Certificates": [
-      "Microsoft Certified: Azure Fundamentals",
-      "Cisco Certified Network Associate (CCNA)"
-    ]
+    "name": "Microsoft Certified: Azure Fundamentals"
   },
   {
-    "Certificates": [
-      "Cisco Certified Network Associate (CCNA)",
-      "Project Management Professional (PMP)"
-    ]
+    "name": "Cisco Certified Network Associate (CCNA)"
   },
   {
-    "Certificates": [
-      "Project Management Professional (PMP)",
-      "AWS Certified Solutions Architect"
-    ]
+    "name": "Project Management Professional (PMP)"
   },
   {
-    "Certificates": [
-      "Certified Ethical Hacker (CEH)",
-      "AWS Certified Solutions Architect"
-    ]
+    "name": "AWS Certified Solutions Architect"
   },
   {
-    "Certificates": [
-      "AWS Certified Solutions Architect",
-      "Certified Ethical Hacker (CEH)"
-    ]
+    "name": "Certified Ethical Hacker (CEH)"
   },
   {
-    "Certificates": [
-      "Certified ScrumMaster (CSM)",
-      "CompTIA Security+"
-    ]
+    "name": "AWS Certified Solutions Architect"
   },
   {
-    "Certificates": [
-      "CompTIA Security+",
-      "IL 8.0"
-    ]
+    "name": "Certified Ethical Hacker (CEH)"
   },
   {
-    "Certificates": [
-      "Google Cloud Professional Cloud Architect",
-      "TOEIC 890"
-    ]
+    "name": "Certified ScrumMaster (CSM)"
   },
   {
-    "Certificates": [
-      "Adobe Certified Expert (ACE)",
-      "MOS 950"
-    ]
+    "name": "CompTIA Security+"
   },
   {
-    "Certificates": [
-      "Certified Information Systems Security Professional (CISSP)",
-      "Aptis 180"
-    ]
+    "name": "IL 8.0"
+  },
+  {
+    "name": "Google Cloud Professional Cloud Architect"
+  },
+  {
+    "name": "TOEIC 890"
+  },
+  {
+    "name": "Adobe Certified Expert (ACE)"
+  },
+  {
+    "name": "MOS 950"
+  },
+  {
+    "name": "Certified Information Systems Security Professional (CISSP)"
+  },
+  {
+    "name": "Aptis 180"
   }
 ]

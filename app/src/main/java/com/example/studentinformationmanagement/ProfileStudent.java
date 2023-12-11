@@ -88,9 +88,12 @@ public class ProfileStudent extends AppCompatActivity {
 
         certificate_layout.setOnClickListener(view -> {
             Intent intent = new Intent(this, ListCertificate.class);
+            // Truyền ID vào intent cho ListCertificate
+            intent.putExtra("STUDENT_ID", String.valueOf(studentPosition));
             startActivity(intent);
             finish();
         });
+
 
         // Set up the profile picture click listener
         avatar.setOnClickListener(view -> {
@@ -134,6 +137,8 @@ public class ProfileStudent extends AppCompatActivity {
                         String name = studentSnapshot.child("Name").getValue(String.class);
                         String gender = studentSnapshot.child("Gender").getValue(String.class);
                         String birth = studentSnapshot.child("Birth").getValue(String.class);
+
+                        Log.e("Student", String.valueOf(studentSnapshot));
 
                         // Call the updateUI method with the obtained information
                         updateUI(name, String.valueOf(firebaseId), gender, birth);

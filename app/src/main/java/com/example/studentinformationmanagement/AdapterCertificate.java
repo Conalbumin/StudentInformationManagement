@@ -33,7 +33,9 @@ public class AdapterCertificate extends RecyclerView.Adapter<AdapterCertificate.
     @Override
     public void onBindViewHolder(@NonNull CertificateViewHolder holder, int position) {
         Certificate certificate = certificateArrayList.get(position);
-        holder.certificateName.setText(certificate.toString());
+
+        // Set the certificate name directly
+        holder.certificateName.setText(certificate.getName());
     }
 
     @Override

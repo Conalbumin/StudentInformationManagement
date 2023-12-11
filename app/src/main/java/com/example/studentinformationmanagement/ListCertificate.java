@@ -2,6 +2,7 @@ package com.example.studentinformationmanagement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class ListCertificate extends AppCompatActivity {
-    private static final String CERTIFICATE_PATH = "certificates";
+    private static final String CERTIFICATES_PATH = "certificates";
+    private static final String STUDENTS_PATH = "students";
 
     private DatabaseReference databaseReference;
     private DatabaseReference certificateRef;
@@ -44,32 +46,44 @@ public class ListCertificate extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        certificateRef = databaseReference.child(CERTIFICATE_PATH);
+        certificateRef = databaseReference.child(CERTIFICATES_PATH);
 
         certificateAdapter = new AdapterCertificate(this, new ArrayList<>());
         recyclerView.setAdapter(certificateAdapter);
 
-        certificateRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Certificate> certificates = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Check if the certificate is a string or an object
-                    if (snapshot.getValue() instanceof String) {
-                        certificates.add(new Certificate((String) snapshot.getValue()));
-                    } else {
-                        Certificate certificate = snapshot.getValue(Certificate.class);
-                        certificates.add(certificate);
-                    }
-                }
-                certificateAdapter.setStudentList(certificates);
-            }
+        // Retrieve the student ID from the intent
+        String studentId = getIntent().getStringExtra("STUDENT_ID");
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error if needed
-            }
-        });
+        if (studentId != null) {
+            // Đặt đường dẫn đến Certificates của sinh viên hiện tại
+            DatabaseReference studentCertificatesRef = databaseReference.child(STUDENTS_PATH)
+                    .child(studentId)
+                    .child("Certificates");
+
+            studentCertificatesRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ArrayList<Certificate> certificates = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        // Check if the certificate is a string or an object
+                        if (snapshot.getValue() instanceof String) {
+                            certificates.add(new Certificate((String) snapshot.getValue()));
+                        } else {
+                            Certificate certificate = snapshot.getValue(Certificate.class);
+                            certificates.add(certificate);
+                        }
+                    }
+                    Log.e("Certificate", "student certificate " + certificates);
+
+                    certificateAdapter.setStudentList(certificates);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Handle error if needed
+                }
+            });
+        }
 
         ic_close.setOnClickListener(view -> {
             finish(); // Close the activity
@@ -80,7 +94,5 @@ public class ListCertificate extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-
     }
 }
