@@ -41,13 +41,12 @@ public class AddNewCer extends AppCompatActivity {
         });
 
         btnAddCer.setOnClickListener(view -> {
-            addCertificate();
+            String certificateName = certificateNameEditText.getText().toString().trim();
+            addCertificate(certificateName);
         });
     }
 
-    private void addCertificate() {
-        String certificateName = certificateNameEditText.getText().toString().trim();
-
+    private void addCertificate(String certificateName) {
         if (!certificateName.isEmpty()) {
             // Create a new certificate object
             Certificate certificate = new Certificate(certificateName);
@@ -65,9 +64,6 @@ public class AddNewCer extends AppCompatActivity {
 
             // Notify the user that the certificate has been added
             Toast.makeText(this, "Certificate added successfully", Toast.LENGTH_SHORT).show();
-
-            // Clear the input field
-            certificateNameEditText.setText("");
         } else {
             // Notify the user that the certificate name is empty
             Toast.makeText(this, "Please enter a certificate name", Toast.LENGTH_SHORT).show();

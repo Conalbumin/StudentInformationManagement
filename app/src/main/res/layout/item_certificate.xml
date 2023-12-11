@@ -11,7 +11,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/ic_delete_user"
+            android:layout_toLeftOf="@+id/ic_delete_certificate"
             android:gravity="center"
             android:text="Name of certificate"
             android:textColor="@color/black"
@@ -19,10 +19,12 @@
             android:textStyle="bold"/>
 
         <ImageView
-            android:id="@+id/ic_delete_user"
+            android:id="@+id/ic_delete_certificate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center"
+            android:clickable="true"
+            android:onClick="onDeleteClick"
             android:background="@drawable/ic_remove" />
 </RelativeLayout>

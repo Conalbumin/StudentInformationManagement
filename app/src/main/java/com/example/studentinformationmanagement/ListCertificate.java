@@ -3,6 +3,7 @@ package com.example.studentinformationmanagement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class ListCertificate extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ImageView ic_close, ic_add_user, ic_delete_user;
     private TextView certificate;
+    private String studentId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class ListCertificate extends AppCompatActivity {
         recyclerView.setAdapter(certificateAdapter);
 
         // Retrieve the student ID from the intent
-        String studentId = getIntent().getStringExtra("STUDENT_ID");
+        studentId = getIntent().getStringExtra("STUDENT_ID");
 
         if (studentId != null) {
             // Đặt đường dẫn đến Certificates của sinh viên hiện tại
@@ -91,9 +94,50 @@ public class ListCertificate extends AppCompatActivity {
 
         ic_add_user.setOnClickListener(view -> {
             Intent intent = new Intent(this, AddNewCer.class);
-            // Pass the student ID to the AddNewCer activity
             intent.putExtra("STUDENT_ID", studentId);
             startActivity(intent);
         });
+
+        certificateAdapter.setOnItemClickListener(position -> deleteCertificate(position));
     }
+
+    public void onDeleteClick(View view) {
+        // Extract the position from the view if needed
+        int position = recyclerView.getChildLayoutPosition((View) view.getParent());
+        deleteCertificate(position);
+    }
+
+
+    private void deleteCertificate(int position) {
+        Certificate certificate = certificateAdapter.getItem(position);
+
+        // Get a reference to the Certificates of the current student
+        DatabaseReference studentCertificatesRef = databaseReference.child("students")
+                .child(studentId)
+                .child("Certificates");
+
+        // Find the key of the certificate to be deleted
+        findCertificateKey(studentCertificatesRef, certificate, position);
+    }
+
+    private void findCertificateKey(DatabaseReference ref, Certificate certificate, int position) {
+        Query query = ref.orderByChild("name").equalTo(certificate.getName());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Remove the certificate from the database
+                    snapshot.getRef().removeValue();
+
+                    // Remove the certificate from the RecyclerView
+                    certificateAdapter.removeCertificate(position);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error if needed
+            }
+        });
+    }
+
 }
