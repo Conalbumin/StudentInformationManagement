@@ -58,7 +58,17 @@ public class ProfileStudent extends AppCompatActivity {
         date_layout = findViewById(R.id.date_layout);
         certificate_layout = findViewById(R.id.certificate_layout);
 
-        getInfoStudent(); // Fetch and display user information
+        // Retrieve the position from the intent
+        int studentPosition = getIntent().getIntExtra("STUDENT_POSITION", -1);
+
+        if (studentPosition != -1) {
+            // Fetch and display student information based on the position
+            getInfoStudent(studentPosition);
+        } else {
+            // Handle the case when the position is not passed correctly
+            Log.e("ProfileStudent", "Invalid student position");
+            finish(); // Close the activity
+        }
 
         ic_close.setOnClickListener(view -> {
             finish(); // Close the activity
@@ -109,47 +119,39 @@ public class ProfileStudent extends AppCompatActivity {
         dateTextView.setText("Birth Date: " + date);
     }
 
-    private void getInfoStudent() {
-        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("students");
-        Log.e("ProfileStudent", "StudentRef " + studentRef);
-        studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getInfoStudent(int studentPosition) {
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
+
+        // Increment the position by 1 to match the ID in Firebase
+        int firebaseId = studentPosition + 1;
+
+        studentsRef.orderByChild("ID").equalTo(String.format("%03d", firebaseId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("ProfileStudent", "onDataChange called");
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
-                        // Access the unique identifier (key) for each student
-                        String studentId = studentSnapshot.child("ID").getValue(String.class);
+                        // Extract student information from the dataSnapshot
                         String name = studentSnapshot.child("Name").getValue(String.class);
                         String gender = studentSnapshot.child("Gender").getValue(String.class);
                         String birth = studentSnapshot.child("Birth").getValue(String.class);
 
-                        // Access the Certificates array
-                        ArrayList<String> certificates = new ArrayList<>();
-                        for (DataSnapshot certificateSnapshot : studentSnapshot.child("Certificates").getChildren()) {
-                            String certificateName = certificateSnapshot.child("name").getValue(String.class);
-                            certificates.add(certificateName);
-                        }
-                        Log.e("ProfileStudent", "Student " + studentId);
-                        Log.e("ProfileStudent", "Student " + name);
-                        Log.e("ProfileStudent", "Student " + gender);
-                        Log.e("ProfileStudent", "Student " + birth);
-                        Log.e("ProfileStudent", "Student " + certificates);
-
                         // Call the updateUI method with the obtained information
-                        updateUI(name, studentId, gender, birth);
+                        updateUI(name, String.valueOf(firebaseId), gender, birth);
                         break;  // Assuming there's only one matching student
                     }
                 } else {
                     Log.e("ProfileStudent", "onDataChange failed: Snapshot does not exist");
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("Firebase Error", "Error getting student data", error.toException());
             }
         });
     }
+
+
 
 
 

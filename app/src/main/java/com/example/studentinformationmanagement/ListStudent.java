@@ -69,11 +69,10 @@ public class ListStudent extends AppCompatActivity {
                 studentAdapter.setStudentList(students);
 
                 studentAdapter.setOnItemClickListener(position -> {
-                    Student selectedStudent = studentAdapter.getStudent(position);
                     Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
 
-                    // Pass the selected student's ID to the ProfileStudent activity
-                    intent.putExtra("STUDENT_ID", selectedStudent.getID());
+                    // Pass the position of the selected student to the ProfileStudent activity
+                    intent.putExtra("STUDENT_POSITION", position);
                     startActivity(intent);
                 });
 
