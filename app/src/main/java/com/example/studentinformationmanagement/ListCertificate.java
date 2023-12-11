@@ -91,8 +91,9 @@ public class ListCertificate extends AppCompatActivity {
 
         ic_add_user.setOnClickListener(view -> {
             Intent intent = new Intent(this, AddNewCer.class);
+            // Pass the student ID to the AddNewCer activity
+            intent.putExtra("STUDENT_ID", studentId);
             startActivity(intent);
-            finish();
         });
     }
 }

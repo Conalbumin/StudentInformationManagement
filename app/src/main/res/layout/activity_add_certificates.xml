@@ -41,12 +41,12 @@
             android:background="@drawable/frame">
 
             <EditText
-                android:id="@+id/search"
+                android:id="@+id/certificateNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:text="Enter here" />
+                android:hint="Enter here" />
         </LinearLayout>
 
         <Button
