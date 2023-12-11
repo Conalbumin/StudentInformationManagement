@@ -21,6 +21,8 @@ public class AdapterCertificate extends RecyclerView.Adapter<AdapterCertificate.
 
     public interface OnItemClickListener {
         void onDeleteClick(int position);
+
+        void onModifyClick(int position);
     }
 
     private OnItemClickListener mListener;
@@ -39,7 +41,7 @@ public class AdapterCertificate extends RecyclerView.Adapter<AdapterCertificate.
     @Override
     public CertificateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_certificate, parent, false);
-        return new CertificateViewHolder(view);
+        return new CertificateViewHolder(view, mListener);
     }
 
     @Override
@@ -68,14 +70,39 @@ public class AdapterCertificate extends RecyclerView.Adapter<AdapterCertificate.
         return certificateArrayList.get(position);
     }
 
+    public void updateCertificateName(int position, String newCertificateName) {
+        Certificate certificate = certificateArrayList.get(position);
+        certificate.setName(newCertificateName);
+        notifyItemChanged(position);
+    }
+
     public static class CertificateViewHolder extends RecyclerView.ViewHolder {
         TextView certificateName;
         ImageView deleteButton;
 
-        public CertificateViewHolder(@NonNull View itemView) {
+        public CertificateViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             certificateName = itemView.findViewById(R.id.certificate);
             deleteButton = itemView.findViewById(R.id.ic_delete_certificate);
+
+            deleteButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onDeleteClick(position);
+                    }
+                }
+            });
+
+            certificateName.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onModifyClick(position);
+                    }
+                }
+            });
         }
     }
+
 }

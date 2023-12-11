@@ -2,13 +2,16 @@ package com.example.studentinformationmanagement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -98,16 +101,99 @@ public class ListCertificate extends AppCompatActivity {
             startActivity(intent);
         });
 
-        certificateAdapter.setOnItemClickListener(position -> deleteCertificate(position));
+        certificateAdapter.setOnItemClickListener(new AdapterCertificate.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                deleteCertificate(position);
+            }
+
+            @Override
+            public void onModifyClick(int position) {
+                Certificate certificate = certificateAdapter.getItem(position);
+                showConfirmationDialog(certificate, position);
+            }
+        });
+
     }
+
+    private void showConfirmationDialog(Certificate certificate, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmation");
+        builder.setMessage("Do you want to change the certificate name?");
+
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            // User clicked Yes, show a dialog to change the certificate name
+            showEditCertificateNameDialog(certificate, position);
+        });
+
+        builder.setNegativeButton("No", (dialog, which) -> {
+            // User clicked No, do nothing
+        });
+
+        builder.show();
+    }
+
+    private void showEditCertificateNameDialog(Certificate certificate, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit Certificate Name");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("Enter new certificate name");
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newCertificateName = input.getText().toString();
+            // Update the certificate name
+            updateCertificateName(certificate, newCertificateName, position);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void updateCertificateName(Certificate certificate, String newCertificateName, int position) {
+        // Update the certificate name in the database
+        DatabaseReference studentCertificatesRef = databaseReference.child("students")
+                .child(studentId)
+                .child("Certificates");
+
+        // Find the certificate with the same name and update its name
+        studentCertificatesRef.orderByChild("name").equalTo(certificate.getName())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            snapshot.child("name").getRef().setValue(newCertificateName);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle error if needed
+                    }
+                });
+
+        // Update the certificate name in the RecyclerView
+        certificateAdapter.updateCertificateName(position, newCertificateName);
+    }
+
+
 
     public void onDeleteClick(View view) {
         // Extract the position from the view if needed
         int position = recyclerView.getChildLayoutPosition((View) view.getParent());
         deleteCertificate(position);
     }
+    private String modifyCertificateName(Certificate certificate) {
+        return certificate.getName();
+    }
 
-
+    private void updateCertificateNameInView(String modifiedCertificateName) {
+        TextView certificateNameTextView = findViewById(R.id.certificate);
+        certificateNameTextView.setText(modifiedCertificateName);
+    }
     private void deleteCertificate(int position) {
         Certificate certificate = certificateAdapter.getItem(position);
 
