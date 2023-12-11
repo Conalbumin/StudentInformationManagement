@@ -1,6 +1,8 @@
 package com.example.studentinformationmanagement;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentViewHolder> {
 
     private ArrayList<Student> studentList;
+    private ArrayList<Student> backupList;
     private Student selectedStudent;
     private Context context;
     private OnItemClickListener mListener;
@@ -30,12 +34,57 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
 
     public void setStudentList(ArrayList<Student> studentList) {
         this.studentList = studentList;
+        // Update the backup list when the original data changes
+        this.backupList = new ArrayList<>(studentList);
         notifyDataSetChanged();
     }
 
     public Student getStudent(int position) {
         return studentList.get(position);
     }
+
+    @Override
+    public int getItemCount() {
+        return studentList.size();
+    }
+    public void sortByName() {
+        Collections.sort(studentList, (s1, s2) -> s1.getName().compareToIgnoreCase(s2.getName()));
+        notifyDataSetChanged();
+    }
+
+    public void sortByID() {
+        Collections.sort(studentList, (s1, s2) -> s1.getID().compareToIgnoreCase(s2.getID()));
+        notifyDataSetChanged();
+        Log.d("FilteredStudents", "Filtered List id: " + studentList); // Log the filtered list
+
+    }
+
+    public void search(String query) {
+        Log.d("FilteredStudents", "Filtered List ori 0: " + studentList);
+
+        ArrayList<Student> filteredList = new ArrayList<>();
+
+        if (TextUtils.isEmpty(query)) {
+            // If the query is empty, restore the original list
+            filteredList.addAll(backupList);
+        } else {
+            // Filter the list based on the query
+            for (Student student : backupList) {
+                if (student.getName().toLowerCase(Locale.getDefault()).contains(query.toLowerCase(Locale.getDefault())) ||
+                        student.getID().toLowerCase(Locale.getDefault()).contains(query.toLowerCase(Locale.getDefault()))) {
+                    filteredList.add(student);
+                }
+            }
+        }
+
+        Log.d("FilteredStudents", "Filtered List: " + filteredList.toString());
+
+        // Update the adapter with the filtered list
+        studentList.clear();
+        studentList.addAll(filteredList);
+        notifyDataSetChanged();
+    }
+
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -47,8 +96,10 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
 
     public AdapterStudent(Context context, ArrayList<Student> studentList) {
         this.context = context;
-        this.studentList = studentList;
+        this.studentList = new ArrayList<>(studentList);
+        this.backupList = new ArrayList<>(studentList); // Initialize original list
     }
+
 
     @NonNull
     @Override
@@ -68,11 +119,6 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
                 mListener.onItemClick(position);
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return studentList.size();
     }
 
     public static class StudentViewHolder extends RecyclerView.ViewHolder {

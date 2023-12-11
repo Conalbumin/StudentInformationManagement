@@ -49,6 +49,8 @@ public class ListStudent extends AppCompatActivity {
         itemStudent = findViewById(R.id.item_student);
         ic_delete_user = findViewById(R.id.ic_delete_user);
 
+        setupSearchView();
+
         recyclerView = findViewById(R.id.list_student);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -85,23 +87,34 @@ public class ListStudent extends AppCompatActivity {
             }
         });
 
-//        ic_delete_user.setOnClickListener(view -> {
-//            if (studentAdapter.getSelectedStudent() != null) {
-//                deleteStudent(studentAdapter.getSelectedStudent().getID());
-//            }
-//        });
+        btnSortByName.setOnClickListener(view -> {
+            studentAdapter.sortByName();
+        });
+
+        btnSortByID.setOnClickListener(view -> {
+            studentAdapter.sortByID();
+        });
 
         icClose.setOnClickListener(view -> finish());
     }
 
-    private void deleteStudent(String studentId) {
-        DatabaseReference studentToDeleteRef = studentRef.child(studentId);
-        studentToDeleteRef.removeValue()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("DeleteStudent", "Student data deleted successfully");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("DeleteStudent", "Error deleting student data", e);
-                });
+
+    private void setupSearchView() {
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Handle the query submission if needed
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("SearchQuery", "Query: " + newText);
+                studentAdapter.search(newText);
+                return true;
+            }
+        });
     }
+
+
 }
