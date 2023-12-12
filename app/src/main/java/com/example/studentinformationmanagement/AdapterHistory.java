@@ -30,8 +30,6 @@ public class AdapterHistory extends RecyclerView.Adapter<AdapterHistory.HistoryV
     @Override
     public void onBindViewHolder(@NonNull AdapterHistory.HistoryViewHolder holder, int position) {
         LoginHistoryItem historyItem = historyList.get(position);
-
-        // Set the login time to the TextView
         holder.loginTime.setText(historyItem.getTimeLogin());
     }
 

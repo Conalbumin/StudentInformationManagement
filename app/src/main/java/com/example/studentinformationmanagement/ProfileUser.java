@@ -154,7 +154,6 @@ public class ProfileUser extends AppCompatActivity {
         builder.show();
     }
 
-
     private void showEditDialog(String field, String hint, View view, String currentValue) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit " + field);
@@ -317,7 +316,6 @@ public class ProfileUser extends AppCompatActivity {
                     getInfoUser();
                 });
     }
-
     // Add onActivityResult method to handle the result of the image picker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -330,8 +328,6 @@ public class ProfileUser extends AppCompatActivity {
             }
         }
     }
-
-
     private void uploadImage(String userId, Uri selectedImage) {
         if (selectedImage != null) {
             Log.e("Avatar Click", "Yes. " + selectedImage);
@@ -366,7 +362,6 @@ public class ProfileUser extends AppCompatActivity {
                     });
         }
     }
-
     private void loadProfileImage(String userId) {
         StorageReference profileImageRef = storageReference.child("profile_images/" + userId + "/profile_picture.jpg");
         profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -376,8 +371,6 @@ public class ProfileUser extends AppCompatActivity {
             // Handle failure
         });
     }
-
-
     private void updateUserProfileImageUrl(String imageUrl) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {

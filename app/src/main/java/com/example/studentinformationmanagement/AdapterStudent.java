@@ -39,16 +39,8 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
     public interface OnDeleteIconClickListener {
         void onDeleteIconClick(int position);
     }
-    public Student getSelectedStudent() {
-        return selectedStudent;
-    }
     public Student getStudent(int position) {
         return studentList.get(position);
-    }
-
-    public void setSelectedStudent(Student student) {
-        selectedStudent = student;
-        notifyDataSetChanged();
     }
 
     public void setStudentList(ArrayList<Student> studentList) {

@@ -31,7 +31,6 @@ public class AdapterCertificate extends RecyclerView.Adapter<AdapterCertificate.
         mListener = listener;
     }
 
-
     public AdapterCertificate(Context context, ArrayList<Certificate> certificateArrayList) {
         this.context = context;
         this.certificateArrayList = certificateArrayList;

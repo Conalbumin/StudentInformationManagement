@@ -55,25 +55,8 @@ public class Student {
         return certificates;
     }
 
-    public static Student createStudentWithCertificate(String ID, String Name, String Birth, String Gender, String certificateName) {
-        Student student = new Student();
-        student.setID(ID);
-        student.setName(Name);
-        student.setGender(Gender);
-        student.setBirth(Birth);
-
-        if (certificateName != null && !certificateName.isEmpty()) {
-            ArrayList<Certificate> certificates = new ArrayList<>();
-            certificates.add(new Certificate(certificateName));
-            student.setCertificates(certificates);
-        }
-
-        return student;
-    }
-
     public Student() {
     }
-
     // Getters and setters for each field
 
     public String getID() {

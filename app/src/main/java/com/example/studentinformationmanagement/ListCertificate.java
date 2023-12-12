@@ -186,14 +186,7 @@ public class ListCertificate extends AppCompatActivity {
         int position = recyclerView.getChildLayoutPosition((View) view.getParent());
         deleteCertificate(position);
     }
-    private String modifyCertificateName(Certificate certificate) {
-        return certificate.getName();
-    }
 
-    private void updateCertificateNameInView(String modifiedCertificateName) {
-        TextView certificateNameTextView = findViewById(R.id.certificate);
-        certificateNameTextView.setText(modifiedCertificateName);
-    }
     private void deleteCertificate(int position) {
         Certificate certificate = certificateAdapter.getItem(position);
 

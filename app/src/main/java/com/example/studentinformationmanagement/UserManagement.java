@@ -60,16 +60,4 @@ public class UserManagement extends AppCompatActivity {
     }
 
 
-    public static void deleteExistingUser() {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            user.delete()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
-                        }
-                    });
-        }
-    }
-
 }

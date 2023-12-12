@@ -16,7 +16,6 @@ public class AddNewCer extends AppCompatActivity {
     private ImageView ic_close;
     private EditText certificateNameEditText;
     private Button btnAddCer;
-
     private DatabaseReference databaseReference;
     private String studentId;
 
