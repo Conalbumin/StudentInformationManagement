@@ -224,9 +224,6 @@ public class ProfileUser extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-
-            Log.e("TAG", String.valueOf(userRef));
-            Log.e("TAG", field);
             switch (field.toLowerCase()) {
                 case "name":
                     userRef.child("name").setValue(newValue);

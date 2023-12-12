@@ -119,7 +119,7 @@ public class ProfileStudent extends AppCompatActivity {
 
         // Find the TextView in date_layout and set the birth date
         TextView dateTextView = date_layout.findViewById(R.id.date);
-        dateTextView.setText("Birth Date: " + date);
+        dateTextView.setText(date);
     }
 
     private void getInfoStudent(int studentPosition) {

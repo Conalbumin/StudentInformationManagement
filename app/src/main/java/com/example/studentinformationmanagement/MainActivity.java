@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterUser.OnItemClickListener {
     private static final String USER_PATH = "users";
 
     private DatabaseReference databaseReference;
@@ -58,9 +58,16 @@ public class MainActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         userRef = databaseReference.child(USER_PATH);
 
-        userAdapter = new AdapterUser(this, new ArrayList<>());
+        userAdapter = new AdapterUser(this, new ArrayList<>(), this);
         recyclerView.setAdapter(userAdapter);
 
+        // Check login status using Firebase Authentication state listener
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser == null){
+            Intent intent = new Intent(MainActivity.this, Login.class);
+            startActivity(intent);
+            finish();
+        }
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -78,14 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 // Handle error if needed
             }
         });
-
-        // Check login status using Firebase Authentication state listener
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser == null){
-            Intent intent = new Intent(MainActivity.this, Login.class);
-            startActivity(intent);
-            finish();
-        }
+        userAdapter.setOnItemClickListener(this);
 
         studentBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, StudentManagement.class);
@@ -110,6 +110,15 @@ public class MainActivity extends AppCompatActivity {
 
         searchBar.setOnClickListener(view -> {
         });
+    }
 
+    @Override
+    public void onItemClick(int position) {
+
+    }
+    @Override
+    public void onDeleteClick(int position, String userEmail) {
+        // Call the public method in AdapterUser to delete the user by email
+        userAdapter.deleteUserByEmail(userEmail);
     }
 }

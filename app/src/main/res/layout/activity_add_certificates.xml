@@ -2,67 +2,61 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    style="@style/loginParent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/ic_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="370dp"
-        android:layout_marginTop="10dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+    <ScrollView style="@style/parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:gravity="center"
-        android:background="@drawable/frame"
-        android:text="Add a new certificate"
-        android:textColor="#2196F3"
-        android:textSize="28sp"/>
+        <RelativeLayout style="@style/parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true">
-
-        <LinearLayout
-            android:id="@+id/searchBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:background="@drawable/frame">
-
-            <EditText
-                android:id="@+id/certificateNameEditText"
+            <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:weightSum="12">
+
+                <LinearLayout
+                    style="@style/parent"
+                    android:layout_weight="3"
+                    android:background="@drawable/login_shape_bk"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        style="@style/parent"
+                        android:background="@drawable/ic_login_bk"
+                        android:contentDescription="login background" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/loginContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="30dp"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <include
+                    android:id="@+id/register"
+                    layout="@layout/layout_add_certificate" />
+            </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/ic_close"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:hint="Enter here" />
-        </LinearLayout>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="370dp"
+                android:layout_marginTop="10dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+        </RelativeLayout>
 
-        <Button
-            android:id="@+id/btnAddCer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/searchBar"
-            android:layout_marginLeft="40sp"
-            android:layout_marginTop="20sp"
-            android:layout_marginRight="40sp"
-            android:background="@drawable/login_button_bk"
-            android:text="Add"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
-
-    </RelativeLayout>
-
+    </ScrollView>
 
 </RelativeLayout>
