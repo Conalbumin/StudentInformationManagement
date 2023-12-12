@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class ListStudent extends AppCompatActivity {
     private DatabaseReference studentRef;
     private AdapterStudent studentAdapter;
     private RecyclerView recyclerView;
-    private ImageView icClose, ic_delete_user;
+    private ImageView icClose, ic_delete_student;
     private SearchView searchBar;
     private TextView btnSortByName, btnSortByID;
     private LinearLayout itemStudent;
@@ -47,7 +49,7 @@ public class ListStudent extends AppCompatActivity {
         btnSortByName = findViewById(R.id.btnSortByName);
         btnSortByID = findViewById(R.id.btnSortByID);
         itemStudent = findViewById(R.id.item_student);
-        ic_delete_user = findViewById(R.id.ic_delete_user);
+        ic_delete_student = findViewById(R.id.ic_delete_student);
 
         setupSearchView();
 
@@ -70,13 +72,17 @@ public class ListStudent extends AppCompatActivity {
                 }
                 studentAdapter.setStudentList(students);
 
-                studentAdapter.setOnItemClickListener(position -> {
-                    Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
-
-                    // Pass the position of the selected student to the ProfileStudent activity
-                    intent.putExtra("STUDENT_POSITION", position);
-                    startActivity(intent);
+                studentAdapter.setOnDeleteIconClickListener(new AdapterStudent.OnDeleteIconClickListener() {
+                    @Override
+                    public void onDeleteIconClick(int position) {
+                        // Handle delete icon click
+                        Student student = studentAdapter.getStudent(position);
+                        if (student != null) {
+                            deleteStudent(student);
+                        }
+                    }
                 });
+
 
 
             }
@@ -86,6 +92,28 @@ public class ListStudent extends AppCompatActivity {
                 // Handle error if needed
             }
         });
+
+        studentAdapter.setOnItemClickListener(new AdapterStudent.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
+                // Pass the position of the selected student to the ProfileStudent activity
+                intent.putExtra("STUDENT_POSITION", position);
+                Log.e("studentAdapter", "di toi profile student");
+                startActivity(intent);
+            }
+
+            @Override
+            public void onDeleteIconClick(int adapterPosition) {
+                // Handle delete icon click
+                Student student = studentAdapter.getStudent(adapterPosition);
+                if (student != null) {
+                    deleteStudent(student);
+                    Log.e("studentAdapter", "deleteStudent");
+                }
+            }
+        });
+
 
         btnSortByName.setOnClickListener(view -> {
             studentAdapter.sortByName();
@@ -98,6 +126,29 @@ public class ListStudent extends AppCompatActivity {
         icClose.setOnClickListener(view -> finish());
     }
 
+    private void deleteStudent(Student student) {
+        // Get a reference to the "students" node in the database
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
+
+        // Find the student key in the database
+        Query query = studentsRef.orderByChild("ID").equalTo(student.getID());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Remove the student from the database
+                    snapshot.getRef().removeValue();
+                }
+                Log.e("Student delete", "Student deleted successfully");
+                Toast.makeText(ListStudent.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Student delete", "Student deleted failed");
+            }
+        });
+    }
 
     private void setupSearchView() {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

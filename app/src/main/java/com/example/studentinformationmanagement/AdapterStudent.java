@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,12 +21,30 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentViewHolder> {
-
     private ArrayList<Student> studentList;
     private ArrayList<Student> backupList;
     private Student selectedStudent;
     private Context context;
     private OnItemClickListener mListener;
+    private OnDeleteIconClickListener deleteIconClickListener;
+
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+    public void setOnDeleteIconClickListener(final OnDeleteIconClickListener listener) {
+        deleteIconClickListener = listener;
+    }
+
+    public interface OnDeleteIconClickListener {
+        void onDeleteIconClick(int position);
+    }
+    public Student getSelectedStudent() {
+        return selectedStudent;
+    }
+    public Student getStudent(int position) {
+        return studentList.get(position);
+    }
 
     public void setSelectedStudent(Student student) {
         selectedStudent = student;
@@ -39,10 +58,6 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
         notifyDataSetChanged();
     }
 
-    public Student getStudent(int position) {
-        return studentList.get(position);
-    }
-
     @Override
     public int getItemCount() {
         return studentList.size();
@@ -51,12 +66,10 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
         Collections.sort(studentList, (s1, s2) -> s1.getName().compareToIgnoreCase(s2.getName()));
         notifyDataSetChanged();
     }
-
     public void sortByID() {
         Collections.sort(studentList, (s1, s2) -> s1.getID().compareToIgnoreCase(s2.getID()));
         notifyDataSetChanged();
     }
-
     public void search(String query) {
         ArrayList<Student> filteredList = new ArrayList<>();
 
@@ -82,10 +95,7 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
 
     public interface OnItemClickListener {
         void onItemClick(int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        mListener = listener;
+        void onDeleteIconClick(int adapterPosition);
     }
 
     public AdapterStudent(Context context, ArrayList<Student> studentList) {
@@ -93,7 +103,6 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
         this.studentList = new ArrayList<>(studentList);
         this.backupList = new ArrayList<>(studentList);
     }
-
 
     @NonNull
     @Override
@@ -115,15 +124,23 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
         });
     }
 
-    public static class StudentViewHolder extends RecyclerView.ViewHolder {
+    public class StudentViewHolder extends RecyclerView.ViewHolder {
         TextView studentName, studentId;
         CircleImageView profile_pic;
+        ImageView icDeleteStudent;
 
         public StudentViewHolder(@NonNull View itemView) {
             super(itemView);
             studentName = itemView.findViewById(R.id.studentName);
             studentId = itemView.findViewById(R.id.studentId);
             profile_pic = itemView.findViewById(R.id.profile_pic);
+            icDeleteStudent = itemView.findViewById(R.id.ic_delete_student);  // Add this line
+
+            icDeleteStudent.setOnClickListener(view -> {
+                if (mListener != null) {
+                    mListener.onDeleteIconClick(getAdapterPosition());
+                }
+            });
         }
     }
 }
