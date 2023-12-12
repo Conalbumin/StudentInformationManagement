@@ -74,12 +74,12 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
                 ArrayList<User> users = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
+                    user.setUid(snapshot.getKey()); // Set the UID from the snapshot key
                     users.add(user);
                     Log.e("TAG", "User: " + user);
                 }
                 userAdapter.setUserList(users);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle error if needed
@@ -118,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
     }
     @Override
     public void onDeleteClick(int position, String userEmail) {
-        // Call the public method in AdapterUser to delete the user by email
-        userAdapter.deleteUserByEmail(userEmail);
+        String userUid = userAdapter.getUserList().get(position).getUid();
+        // Call the public method in AdapterUser to delete the user by email and UID
+        userAdapter.deleteUserByEmail(userEmail, userUid);
     }
+
 }

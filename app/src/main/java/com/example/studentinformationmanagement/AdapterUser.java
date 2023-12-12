@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,26 +49,23 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
         return userList.size();
     }
 
+    public static ArrayList<User> getUserList() {
+        return userList;
+    }
+
     public void setUserList(ArrayList<User> userList) {
         this.userList = userList;
         notifyDataSetChanged();
     }
 
-    public void deleteUserByEmail(String userEmail) {
+    public void deleteUserByEmail(String userEmail, String userUid) {
         // Call the private method to handle the deletion from the database
         Log.e("TAG", userEmail);
-        deleteUserFromDatabase(userEmail);
+        deleteUserFromDatabase(userEmail, userUid);
     }
 
-    public void deleteUser(int position) {
-        if (onItemClickListener != null) {
-            onItemClickListener.onDeleteClick(position, userList.get(position).getEmail());
-        }
-    }
-
-    private void deleteUserFromDatabase(String userEmail) {
-        // Implement the logic to delete the user from the database using email
-        // Query the database to find the user with the matching email
+    private void deleteUserFromDatabase(String userEmail, String userUid) {
+        // Implement the logic to delete the user from the database using email and UID
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users");
 
         Query query = userRef.orderByChild("email").equalTo(userEmail);
@@ -77,6 +76,8 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
                     snapshot.getRef().removeValue().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "User deleted from the database using email: " + userEmail);
+                            // Now, delete the corresponding user from Firebase Authentication
+                            deleteUserFromAuthentication(userUid);
                         } else {
                             Log.e("TAG", "Error deleting user from the database: " + task.getException().getMessage());
                         }
@@ -90,6 +91,19 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
             }
         });
     }
+
+    private void deleteUserFromAuthentication(String userUid) {
+        // Implement the logic to delete the user from Firebase Authentication using UID
+        FirebaseAuth.getInstance().getCurrentUser().delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("TAG", "User deleted from Firebase Authentication using UID: " + userUid);
+                    } else {
+                        Log.e("TAG", "Error deleting user from Firebase Authentication: " + task.getException().getMessage());
+                    }
+                });
+    }
+
 
     @NonNull
     @Override

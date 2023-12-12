@@ -9,6 +9,8 @@ public class User {
     private String PhoneNumber;
     private boolean Status;
     private String Role;
+    private String uid;
+
 
     // Constructor
     public User(String Email, String Name, int Age, String PhoneNumber, boolean Status, String Role) {
@@ -18,6 +20,14 @@ public class User {
         this.PhoneNumber = PhoneNumber;
         this.Status = Status;      // on/off
         this.Role = Role;    // admin/manAger/employee
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public User(){}
