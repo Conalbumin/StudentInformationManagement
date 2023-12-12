@@ -87,7 +87,7 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/btnAddUser"
+            android:id="@+id/btnAddStudent"
             style="@style/loginButton"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/loginViewsMargin"

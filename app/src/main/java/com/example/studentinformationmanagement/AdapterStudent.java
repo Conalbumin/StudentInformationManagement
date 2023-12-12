@@ -55,13 +55,9 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
     public void sortByID() {
         Collections.sort(studentList, (s1, s2) -> s1.getID().compareToIgnoreCase(s2.getID()));
         notifyDataSetChanged();
-        Log.d("FilteredStudents", "Filtered List id: " + studentList); // Log the filtered list
-
     }
 
     public void search(String query) {
-        Log.d("FilteredStudents", "Filtered List ori 0: " + studentList);
-
         ArrayList<Student> filteredList = new ArrayList<>();
 
         if (TextUtils.isEmpty(query)) {
@@ -76,8 +72,6 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
                 }
             }
         }
-
-        Log.d("FilteredStudents", "Filtered List: " + filteredList.toString());
 
         // Update the adapter with the filtered list
         studentList.clear();
@@ -97,7 +91,7 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.StudentV
     public AdapterStudent(Context context, ArrayList<Student> studentList) {
         this.context = context;
         this.studentList = new ArrayList<>(studentList);
-        this.backupList = new ArrayList<>(studentList); // Initialize original list
+        this.backupList = new ArrayList<>(studentList);
     }
 
 

@@ -20,6 +20,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class StudentManagement extends AppCompatActivity {
     private static final String TAG = "StudentManagement";
     private static FirebaseAuth auth;
@@ -89,50 +93,36 @@ public class StudentManagement extends AppCompatActivity {
         });
     }
 
-    public static void addNewStudent(String email, String password, String name, int age, String phoneNumber, boolean status, String isAdmin) {
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user != null) {
-                            User userData = new User(email, name, age, phoneNumber, status, isAdmin);
-                            addStudentToDatabase(email, userData);
-                        }
-                    } else {
-                        // Handle failure
-                    }
-                });
-    }
+    public static void addNewStudentToDatabase(Student student) {
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
 
-    private static void addStudentToDatabase(String email, User user) {
-        databaseReference.child(email.replace(".", ",")).setValue(user);
-    }
+        // Create a map with field names matching your data structure
+        Map<String, Object> studentData = new HashMap<>();
+        studentData.put("ID", student.getID());
+        studentData.put("Name", student.getName());
+        studentData.put("Gender", student.getGender());
+        studentData.put("Birth", student.getBirth());
 
-    public static void deleteExistingStudent() {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            user.delete()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
-                        }
-                    });
+        // Convert Certificates to a list of maps with "name" as the key
+        ArrayList<Map<String, Object>> certificatesData = new ArrayList<>();
+        if (student.getCertificates() != null) {
+            for (Certificate certificate : student.getCertificates()) {
+                Map<String, Object> certData = new HashMap<>();
+                certData.put("name", certificate.getName());
+                certificatesData.add(certData);
+            }
         }
-    }
+        studentData.put("Certificates", certificatesData);
 
-    public static void modifyStudentInfo(String displayName, Uri photoUri) {
-        FirebaseUser user = auth.getCurrentUser();
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(displayName)
-                .setPhotoUri(photoUri)
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("TAG", "User profile updated.");
-                    }
+        // Add the new student to the "students" node in the database
+        studentsRef.push().setValue(studentData)
+                .addOnSuccessListener(aVoid -> {
+                    // Handle success
+                    Log.d("AddNewStudent", "New student added to database successfully");
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("AddNewStudent", "Error adding new student to database", e);
                 });
     }
 }
