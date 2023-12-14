@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,17 +28,23 @@ import java.util.Map;
 public class StudentManagement extends AppCompatActivity {
     private static final String TAG = "StudentManagement";
     private static FirebaseAuth auth;
+    private static FirebaseUser currentUser;
     private static DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference studentRef = databaseReference.child("student");
     private AppCompatButton userBtn, studentBtn, profileBtn;
-    private LinearLayout btnStudentList, btnAddStudent, btnAddStudentFromCSV,
+    private LinearLayout btnStudentList, btnAddStudent, btnAddStudentFromCSV, item_user,
             btnExportStudentToCSV, btnAddCertificateFromCSV, btnExportCertificateToCSV;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
+        // Initialize Firebase Authentication
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+
         // Initialize UI elements
+        item_user = findViewById(R.id.item_user);
         userBtn = findViewById(R.id.userBtn);
         studentBtn = findViewById(R.id.studentBtn);
         profileBtn = findViewById(R.id.profileBtn);
@@ -47,6 +54,8 @@ public class StudentManagement extends AppCompatActivity {
         btnExportStudentToCSV = findViewById(R.id.btnExportStudentToCSV);
         btnAddCertificateFromCSV = findViewById(R.id.btnAddCertificateFromCSV);
         btnExportCertificateToCSV = findViewById(R.id.btnExportCertificateToCSV);
+
+        fetchAndDisplayUserInfo();
 
         profileBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, ProfileUser.class);
@@ -91,6 +100,47 @@ public class StudentManagement extends AppCompatActivity {
         btnExportCertificateToCSV.setOnClickListener(view -> {
             // Handle btnExportCertificateToCSV click
         });
+    }
+
+    private void fetchAndDisplayUserInfo() {
+        // Get the user ID of the current user
+        String userId = currentUser.getUid();
+
+        // Assuming you have a method to fetch user information from the database
+        // Modify the method accordingly based on your database structure
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // User information found, create a User object
+                    User user = dataSnapshot.getValue(User.class);
+
+                    // Assuming you have a method to display user information in the list
+                    // Modify the method accordingly based on your list structure
+                    displayUserInList(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error if needed
+            }
+        });
+    }
+
+    private void displayUserInList(User user) {
+        displayUserDetails(user);
+    }
+
+    private void displayUserDetails(User user) {
+        TextView userNameTextView = item_user.findViewById(R.id.personName);
+        TextView userPhoneTextView = item_user.findViewById(R.id.personNumber);
+        TextView userRoleTextView = item_user.findViewById(R.id.userRole);
+
+        userNameTextView.setText(user.getName());
+        userPhoneTextView.setText(user.getPhoneNumber());
+        userRoleTextView.setText(user.getRole());
     }
 
     public static void addNewStudentToDatabase(Student student) {
