@@ -1,10 +1,34 @@
 {
+  "0EI6DG8XNThBQ048o81yE0adfT63": {
+    "age": 43,
+    "email": "admin@gmail.com",
+    "name": "Admin",
+    "phoneNumber": "0989876765",
+    "role": "Admin",
+    "status": true
+  },
+  "AgRoWhhfCcPB2q8yKU18nicfHZG2": {
+    "age": 54,
+    "email": "manager@gmail.com",
+    "name": "Manager",
+    "phoneNumber": "8475968475",
+    "role": "Manager",
+    "status": true
+  },
   "RONkpq1uFbckSp3IQMzQjBZkqKw1": {
+    "age": 23,
     "email": "test@gmail.com",
     "name": "Test",
-    "age": 23,
     "phoneNumber": "0923746154",
-    "status": true,
-    "role": "Admin"
+    "role": "Admin",
+    "status": true
+  },
+  "W0AW5SILMlRfo0zBOyqx5cSNK4u1": {
+    "age": 25,
+    "email": "employee@gmail.com",
+    "name": "Employee",
+    "phoneNumber": "098957457",
+    "role": "Employee",
+    "status": true
   }
 }

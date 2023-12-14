@@ -33,10 +33,9 @@ public class ListStudent extends AppCompatActivity {
     private DatabaseReference studentRef;
     private AdapterStudent studentAdapter;
     private RecyclerView recyclerView;
-    private ImageView icClose, ic_delete_student;
+    private ImageView icClose;
     private SearchView searchBar;
     private TextView btnSortByName, btnSortByID;
-    private LinearLayout itemStudent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +47,6 @@ public class ListStudent extends AppCompatActivity {
         searchBar = findViewById(R.id.searchBar);
         btnSortByName = findViewById(R.id.btnSortByName);
         btnSortByID = findViewById(R.id.btnSortByID);
-        itemStudent = findViewById(R.id.item_student);
-        ic_delete_student = findViewById(R.id.ic_delete_student);
 
         setupSearchView();
 
@@ -72,19 +69,13 @@ public class ListStudent extends AppCompatActivity {
                 }
                 studentAdapter.setStudentList(students);
 
-                studentAdapter.setOnDeleteIconClickListener(new AdapterStudent.OnDeleteIconClickListener() {
-                    @Override
-                    public void onDeleteIconClick(int position) {
-                        // Handle delete icon click
-                        Student student = studentAdapter.getStudent(position);
-                        if (student != null) {
-                            deleteStudent(student);
-                        }
+                studentAdapter.setOnDeleteIconClickListener(position -> {
+                    // Handle delete icon click
+                    Student student = studentAdapter.getStudent(position);
+                    if (student != null) {
+                        deleteStudent(student);
                     }
                 });
-
-
-
             }
 
             @Override
@@ -114,7 +105,6 @@ public class ListStudent extends AppCompatActivity {
             }
         });
 
-
         btnSortByName.setOnClickListener(view -> {
             studentAdapter.sortByName();
         });
@@ -127,25 +117,33 @@ public class ListStudent extends AppCompatActivity {
     }
 
     private void deleteStudent(Student student) {
-        // Get a reference to the "students" node in the database
-        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
+        UserManagement.getCurrentRole(currentRole -> {
+            if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                // If the user has Admin or Manager role, proceed to delete the student
+                // Get a reference to the "students" node in the database
+                DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
 
-        // Find the student key in the database
-        Query query = studentsRef.orderByChild("ID").equalTo(student.getID());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Remove the student from the database
-                    snapshot.getRef().removeValue();
-                }
-                Log.e("Student delete", "Student deleted successfully");
-                Toast.makeText(ListStudent.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
-            }
+                // Find the student key in the database
+                Query query = studentsRef.orderByChild("ID").equalTo(student.getID());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            // Remove the student from the database
+                            snapshot.getRef().removeValue();
+                        }
+                        Log.e("Student delete", "Student deleted successfully");
+                        Toast.makeText(ListStudent.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Student delete", "Student deleted failed");
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Student delete", "Student deleted failed");
+                    }
+                });
+            } else {
+                // If the user doesn't have the required role, show a message or take appropriate action
+                Toast.makeText(ListStudent.this, "You do not have the required role to delete a student", Toast.LENGTH_SHORT).show();
             }
         });
     }

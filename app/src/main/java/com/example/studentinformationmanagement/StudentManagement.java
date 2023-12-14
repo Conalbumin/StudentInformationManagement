@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -81,8 +82,16 @@ public class StudentManagement extends AppCompatActivity {
         });
 
         btnAddStudent.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddNewStudent.class);
-            startActivity(intent);
+            UserManagement.getCurrentRole(currentRole -> {
+                if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                    // If the user has Admin or Manager role, proceed to add a new student
+                    Intent intent = new Intent(this, AddNewStudent.class);
+                    startActivity(intent);
+                } else {
+                    // If the user doesn't have the required role, show a message or take appropriate action
+                    Toast.makeText(StudentManagement.this, "You do not have the required role to add a student", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         btnAddStudentFromCSV.setOnClickListener(view -> {

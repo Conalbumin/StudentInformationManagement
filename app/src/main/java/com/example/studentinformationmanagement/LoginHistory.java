@@ -2,6 +2,8 @@ package com.example.studentinformationmanagement;
 
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,27 +43,37 @@ public class LoginHistory extends AppCompatActivity {
         adapter = new AdapterHistory(LoginHistory.this, new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("loginHistory").child(userId);
+        // Check the user role before proceeding
+        UserManagement.getCurrentRole(currentRole -> {
+            if ("Admin".equals(currentRole)) {
+                // User has Admin role, proceed to fetch and display login history
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("loginHistory").child(userId);
 
-        // Retrieve and display user history from Realtime Database
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<LoginHistoryItem> historyList = new ArrayList<>();
+                // Retrieve and display user history from Realtime Database
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<LoginHistoryItem> historyList = new ArrayList<>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String timestamp = snapshot.getValue(String.class);
-                    historyList.add(new LoginHistoryItem(timestamp));
-                }
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String timestamp = snapshot.getValue(String.class);
+                            historyList.add(new LoginHistoryItem(timestamp));
+                        }
 
-                // Update the adapter with the new data
-                adapter.setHistoryList(historyList);
-            }
+                        // Update the adapter with the new data
+                        adapter.setHistoryList(historyList);
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle error
+                    }
+                });
+            } else {
+                // User doesn't have Admin role, show a message or take appropriate action
+                Toast.makeText(LoginHistory.this, "You are not allowed to view login history", Toast.LENGTH_SHORT).show();
+                finish(); // Close the activity or handle it accordingly
             }
         });
     }
