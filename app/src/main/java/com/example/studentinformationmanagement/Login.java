@@ -20,8 +20,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,9 +90,7 @@ public class Login extends AppCompatActivity {
                             if (user != null) {
                                 String userId = user.getUid();
 
-                                // Save login timestamp under the user's ID
-                                saveUserHistory(userId);
-
+                                checkUserStatus(userId, email);
                                 // Navigate to MainActivity
                                 Intent intent = new Intent(Login.this, MainActivity.class);
                                 startActivity(intent);
@@ -104,10 +105,39 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    private void checkUserStatus(String userId, String email) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    boolean status = dataSnapshot.child("status").getValue(Boolean.class);
+
+                    if (status) {
+                        // User is active, proceed with login
+                        // Save login timestamp under the user's ID
+                        saveUserHistory(userId);
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // User is disabled, show appropriate message
+                        mAuth.signOut();
+                        Toast.makeText(getApplicationContext(), "User is disabled. Please contact support.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("TAG", "Error checking user status: " + error.getMessage());
+            }
+        });
+    }
+
     private void saveUserHistory(String userId) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        // Save login timestamp under the user's ID
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
         databaseReference.child("loginHistory").child(userId).push().setValue(timestamp);
     }
