@@ -124,28 +124,37 @@ public class ProfileStudent extends AppCompatActivity {
     }
 
     private void showEditStudentDialog(String field, String hint, View view, String currentValue, int studentPosition) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit " + field);
-        builder.setMessage(hint);
+        UserManagement.getCurrentRole(currentRole -> {
+            if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                // User has Admin or Manager role, proceed with showing the edit dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Edit " + field);
+                builder.setMessage(hint);
 
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setHint(currentValue);
-        builder.setView(input);
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setHint(currentValue);
+                builder.setView(input);
 
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String newValue = input.getText().toString();
-            updateStudentInfo(field, newValue, studentPosition);
+                builder.setPositiveButton("Save", (dialog, which) -> {
+                    String newValue = input.getText().toString();
+                    updateStudentInfo(field, newValue, studentPosition);
 
-            if (view instanceof TextView) {
-                ((TextView) view).setText(newValue);
+                    if (view instanceof TextView) {
+                        ((TextView) view).setText(newValue);
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+                builder.show();
+            } else {
+                // User does not have the required role, show a message or take appropriate action
+                Toast.makeText(ProfileStudent.this, "You do not have the required role to edit student information", Toast.LENGTH_SHORT).show();
             }
         });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-        builder.show();
     }
+
 
 
     private void getInfoStudent(int studentPosition) {
