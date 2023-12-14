@@ -1,10 +1,14 @@
 package com.example.studentinformationmanagement;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -74,17 +79,14 @@ public class ProfileStudent extends AppCompatActivity {
             finish(); // Close the activity
         });
 
-        id_fullName_TextView.setOnClickListener(view -> {
-        });
+        id_fullName_TextView.setOnClickListener(view ->
+                showEditStudentDialog("name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString(), 0));
 
-        id_layout.setOnClickListener(view -> {
-        });
+        gender_layout.setOnClickListener(view ->
+                showEditStudentDialog("gender", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString(), 0));
 
-        gender_layout.setOnClickListener(view -> {
-        });
-
-        date_layout.setOnClickListener(view -> {
-        });
+        date_layout.setOnClickListener(view ->
+                showEditStudentDialog("birth", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString(), 0));
 
         certificate_layout.setOnClickListener(view -> {
             Intent intent = new Intent(this, ListCertificate.class);
@@ -93,7 +95,6 @@ public class ProfileStudent extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
 
         // Set up the profile picture click listener
         avatar.setOnClickListener(view -> {
@@ -122,9 +123,34 @@ public class ProfileStudent extends AppCompatActivity {
         dateTextView.setText(date);
     }
 
+    private void showEditStudentDialog(String field, String hint, View view, String currentValue, int studentPosition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit " + field);
+        builder.setMessage(hint);
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint(currentValue);
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newValue = input.getText().toString();
+            updateStudentInfo(field, newValue, studentPosition);
+
+            if (view instanceof TextView) {
+                ((TextView) view).setText(newValue);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+
     private void getInfoStudent(int studentPosition) {
         DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
-
+        Log.e("studentPosition", String.valueOf(studentPosition));
         // Increment the position by 1 to match the ID in Firebase
         int firebaseId = studentPosition + 1;
 
@@ -154,6 +180,31 @@ public class ProfileStudent extends AppCompatActivity {
                 Log.e("Firebase Error", "Error getting student data", error.toException());
             }
         });
+    }
+
+    private void updateStudentInfo(String field, String newValue, int studentPosition) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference("students");
+            DatabaseReference studentRef = studentsRef.child(String.valueOf(studentPosition));
+            Log.e("studentRef", String.valueOf(studentRef));
+
+            switch (field.toLowerCase()) {
+                case "name":
+                    studentRef.child("Name").setValue(newValue);
+                    break;
+                case "gender":
+                    studentRef.child("Gender").setValue((newValue));
+                    break;
+                case "birth":
+                    studentRef.child("Birth").setValue(newValue);
+                    break;
+                default:
+                    return;
+            }
+            // Update the UI or perform other tasks
+            getInfoStudent(studentPosition);
+        }
     }
 
     @Override

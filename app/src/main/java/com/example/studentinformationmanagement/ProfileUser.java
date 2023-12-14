@@ -123,17 +123,6 @@ public class ProfileUser extends AppCompatActivity {
             selectImage();
         });
     }
-
-    private void selectImage() {
-        Log.e("Avatar Click", "Avatar clicked. Starting image selection...");
-
-        Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
-    }
-
     private void showConfirmationDialog(Uri selectedImage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirmation");
@@ -327,6 +316,15 @@ public class ProfileUser extends AppCompatActivity {
                 showConfirmationDialog(data.getData());
             }
         }
+    }
+    private void selectImage() {
+        Log.e("Avatar Click", "Avatar clicked. Starting image selection...");
+
+        Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
     }
     private void uploadImage(String userId, Uri selectedImage) {
         if (selectedImage != null) {
