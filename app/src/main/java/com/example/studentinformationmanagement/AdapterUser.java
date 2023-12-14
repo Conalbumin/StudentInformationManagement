@@ -76,8 +76,6 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
                     snapshot.getRef().removeValue().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "User deleted from the database using email: " + userEmail);
-                            // Now, delete the corresponding user from Firebase Authentication
-                            deleteUserFromAuthentication(userUid);
                         } else {
                             Log.e("TAG", "Error deleting user from the database: " + task.getException().getMessage());
                         }
@@ -90,18 +88,6 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
                 Log.e("TAG", "Error querying the database: " + error.getMessage());
             }
         });
-    }
-
-    private void deleteUserFromAuthentication(String userUid) {
-        // Implement the logic to delete the user from Firebase Authentication using UID
-        FirebaseAuth.getInstance().getCurrentUser().delete()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("TAG", "User deleted from Firebase Authentication using UID: " + userUid);
-                    } else {
-                        Log.e("TAG", "Error deleting user from Firebase Authentication: " + task.getException().getMessage());
-                    }
-                });
     }
 
 
