@@ -76,6 +76,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
                     snapshot.getRef().removeValue().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "User deleted from the database using email: " + userEmail);
+                            // Now, delete the corresponding user from Firebase Authentication
                         } else {
                             Log.e("TAG", "Error deleting user from the database: " + task.getException().getMessage());
                         }

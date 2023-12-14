@@ -47,6 +47,7 @@ public class AddNewUser extends AppCompatActivity {
             String role = txtUserRole.getText().toString();
             boolean status = txtUserStatus.isChecked();
 
+            // Proceed with adding a new user
             UserManagement.addNewUser(email, password, name, age, phoneNumber, status, role);
             finish();
         });

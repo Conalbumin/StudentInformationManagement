@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -104,8 +105,16 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         });
 
         ic_add_user.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddNewUser.class);
-            startActivity(intent);
+            // Check if the current user has the permission to add a new user
+            UserManagement.getCurrentRole(currentRole -> {
+                if (UserManagement.isCurrentUserAllowedToAddUser(currentRole)) {
+                    // User has permission, proceed to AddNewUser activity
+                    Intent intent = new Intent(MainActivity.this, AddNewUser.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "You are not allowed to add user", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         searchBar.setOnClickListener(view -> {
@@ -122,5 +131,7 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         // Call the public method in AdapterUser to delete the user by email and UID
         userAdapter.deleteUserByEmail(userEmail, userUid);
     }
+
+
 
 }

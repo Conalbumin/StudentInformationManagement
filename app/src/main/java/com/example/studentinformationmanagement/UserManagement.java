@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,5 +60,38 @@ public class UserManagement extends AppCompatActivity {
                 });
     }
 
+    public static boolean isCurrentUserAllowedToAddUser(String currentRole) {
+        if (currentRole.equals("Admin")) {
+            return true;
+        }
+        return false;
+    }
 
+    public static void getCurrentRole(RoleCallback callback) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            userRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user != null) {
+                            String role = user.getRole();
+                            Log.e("currentRole", "getCurrentRole " + role);
+                            callback.onRoleReceived(role);
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+        }
+    }
+
+
+    interface RoleCallback {
+        void onRoleReceived(String role);
+    }
 }
