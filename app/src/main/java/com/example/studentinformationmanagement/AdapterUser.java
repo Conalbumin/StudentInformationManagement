@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder> {
     private static ArrayList<User> userList;
+    private String currentUserRole;
     private Context context;
     private static OnItemClickListener onItemClickListener;
 
@@ -34,10 +36,12 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
         void onDeleteClick(int position, String userEmail);
     }
 
-    public AdapterUser(Context context, ArrayList<User> userList, OnItemClickListener listener) {
+    public AdapterUser(Context context, ArrayList<User> userList, OnItemClickListener listener, String currentUserRole) {
         this.context = context;
         this.userList = userList;
         this.onItemClickListener = listener;
+        this.currentUserRole = currentUserRole;
+
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -108,10 +112,13 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
 
         // Set a click listener for the delete button
         holder.deleteButton.setOnClickListener(v -> {
-            if (onItemClickListener != null) {
+            if (onItemClickListener != null && currentUserRole.equals("Admin")) {
                 // Call onDeleteClick method when the delete button is clicked
                 Log.e("TAG", "onBindViewHolder" + user.getEmail());
                 onItemClickListener.onDeleteClick(position, user.getEmail()); // Pass user email
+            } else {
+                // Handle the case when the current user is not an admin
+                Toast.makeText(context, "You are not allowed to delete users", Toast.LENGTH_SHORT).show();
             }
         });
     }

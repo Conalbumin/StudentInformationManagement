@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
-        // khai bao
+        // Initialize UI elements
         studentBtn = findViewById(R.id.studentBtn);
         profileBtn = findViewById(R.id.profileBtn);
         userBtn = findViewById(R.id.userBtn);
@@ -59,66 +59,73 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         databaseReference = FirebaseDatabase.getInstance().getReference();
         userRef = databaseReference.child(USER_PATH);
 
-        userAdapter = new AdapterUser(this, new ArrayList<>(), this);
-        recyclerView.setAdapter(userAdapter);
-
         // Check login status using Firebase Authentication state listener
         FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser == null){
+        if (currentUser == null) {
             Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
             finish();
-        }
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<User> users = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = snapshot.getValue(User.class);
-                    user.setUid(snapshot.getKey()); // Set the UID from the snapshot key
-                    users.add(user);
-                    Log.e("TAG", "User: " + user);
-                }
-                userAdapter.setUserList(users);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error if needed
-            }
-        });
-        userAdapter.setOnItemClickListener(this);
-
-        studentBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, StudentManagement.class);
-            startActivity(intent);
-            finish();
-        });
-        profileBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ProfileUser.class);
-            startActivity(intent);
-            finish();
-        });
-        userBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        });
-
-        ic_add_user.setOnClickListener(view -> {
-            // Check if the current user has the permission to add a new user
+        } else {
+            // Obtain the current user's role
             UserManagement.getCurrentRole(currentRole -> {
-                if (UserManagement.isCurrentUserAllowedToAddUser(currentRole)) {
-                    // User has permission, proceed to AddNewUser activity
-                    Intent intent = new Intent(MainActivity.this, AddNewUser.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(MainActivity.this, "You are not allowed to add user", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+                String currentUserRole = currentRole;
 
-        searchBar.setOnClickListener(view -> {
-        });
+                // Initialize AdapterUser with the obtained role
+                userAdapter = new AdapterUser(this, new ArrayList<>(), MainActivity.this, currentUserRole);
+                recyclerView.setAdapter(userAdapter);
+
+                // Continue with the rest of your code
+                userRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<User> users = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user = snapshot.getValue(User.class);
+                            user.setUid(snapshot.getKey()); // Set the UID from the snapshot key
+                            users.add(user);
+                            Log.e("TAG", "User: " + user);
+                        }
+                        userAdapter.setUserList(users);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle error if needed
+                    }
+                });
+
+                userAdapter.setOnItemClickListener(MainActivity.this);
+
+                studentBtn.setOnClickListener(view -> {
+                    Intent intent = new Intent(MainActivity.this, StudentManagement.class);
+                    startActivity(intent);
+                    finish();
+                });
+
+                profileBtn.setOnClickListener(view -> {
+                    Intent intent = new Intent(MainActivity.this, ProfileUser.class);
+                    startActivity(intent);
+                    finish();
+                });
+
+                userBtn.setOnClickListener(view -> {
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                });
+
+                ic_add_user.setOnClickListener(view -> {
+                    // Check if the current user has the permission to add a new user
+                    if (UserManagement.isCurrentUserAllowedToAddUser(currentUserRole)) {
+                        // User has permission, proceed to AddNewUser activity
+                        Intent intent = new Intent(MainActivity.this, AddNewUser.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(MainActivity.this, "You are not allowed to add user", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        }
     }
 
     @Override
