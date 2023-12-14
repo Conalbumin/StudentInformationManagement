@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +34,7 @@ public class ListCertificate extends AppCompatActivity {
     private DatabaseReference certificateRef;
     private AdapterCertificate certificateAdapter;
     private RecyclerView recyclerView;
-    private ImageView ic_close, ic_add_user, ic_delete_user;
+    private ImageView ic_close, ic_add_cer, ic_delete_cer;
     private TextView certificate;
     private String studentId;
 
@@ -44,8 +45,8 @@ public class ListCertificate extends AppCompatActivity {
 
         // Initialize views
         ic_close = findViewById(R.id.ic_close);
-        ic_add_user = findViewById(R.id.ic_add_user);
-        ic_delete_user = findViewById(R.id.ic_delete_user);
+        ic_add_cer = findViewById(R.id.ic_add_cer);
+        ic_delete_cer = findViewById(R.id.ic_delete_cer);
         certificate = findViewById(R.id.certificate);
 
         recyclerView = findViewById(R.id.listviewCer);
@@ -65,7 +66,6 @@ public class ListCertificate extends AppCompatActivity {
             DatabaseReference studentCertificatesRef = databaseReference.child(STUDENTS_PATH)
                     .child(studentId)
                     .child("Certificates");
-
             studentCertificatesRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -80,10 +80,8 @@ public class ListCertificate extends AppCompatActivity {
                         }
                     }
                     Log.e("Certificate", "student certificate " + certificates);
-
                     certificateAdapter.setStudentList(certificates);
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     // Handle error if needed
@@ -95,11 +93,20 @@ public class ListCertificate extends AppCompatActivity {
             finish(); // Close the activity
         });
 
-        ic_add_user.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddNewCer.class);
-            intent.putExtra("STUDENT_ID", studentId);
-            startActivity(intent);
+        ic_add_cer.setOnClickListener(view -> {
+            UserManagement.getCurrentRole(currentRole -> {
+                if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                    // If the user has Admin or Manager role, proceed to add a new certificate
+                    Intent intent = new Intent(this, AddNewCer.class);
+                    intent.putExtra("STUDENT_ID", studentId);
+                    startActivity(intent);
+                } else {
+                    // If the user doesn't have the required role, show a message or take appropriate action
+                    Toast.makeText(ListCertificate.this, "You do not have the required role to add a certificate", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+
 
         certificateAdapter.setOnItemClickListener(new AdapterCertificate.OnItemClickListener() {
             @Override
@@ -110,9 +117,20 @@ public class ListCertificate extends AppCompatActivity {
             @Override
             public void onModifyClick(int position) {
                 Certificate certificate = certificateAdapter.getItem(position);
-                showConfirmationDialog(certificate, position);
+
+                // Check user role before allowing modification
+                UserManagement.getCurrentRole(currentRole -> {
+                    if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                        // User has Admin or Manager role, proceed with modification
+                        showConfirmationDialog(certificate, position);
+                    } else {
+                        // User does not have the required role, show a message or take appropriate action
+                        Toast.makeText(ListCertificate.this, "You do not have the required role to modify a certificate", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
+
 
     }
 
@@ -179,8 +197,6 @@ public class ListCertificate extends AppCompatActivity {
         certificateAdapter.updateCertificateName(position, newCertificateName);
     }
 
-
-
     public void onDeleteClick(View view) {
         // Extract the position from the view if needed
         int position = recyclerView.getChildLayoutPosition((View) view.getParent());
@@ -195,8 +211,16 @@ public class ListCertificate extends AppCompatActivity {
                 .child(studentId)
                 .child("Certificates");
 
-        // Find the key of the certificate to be deleted
-        findCertificateKey(studentCertificatesRef, certificate, position);
+        // Check user role before allowing deletion
+        UserManagement.getCurrentRole(currentRole -> {
+            if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                // User has Admin or Manager role, proceed with deletion
+                findCertificateKey(studentCertificatesRef, certificate, position);
+            } else {
+                // User does not have the required role, show a message or take appropriate action
+                Toast.makeText(ListCertificate.this, "You do not have the required role to delete a certificate", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void findCertificateKey(DatabaseReference ref, Certificate certificate, int position) {

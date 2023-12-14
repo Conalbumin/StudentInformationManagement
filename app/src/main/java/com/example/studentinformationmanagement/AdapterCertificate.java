@@ -82,7 +82,7 @@ public class AdapterCertificate extends RecyclerView.Adapter<AdapterCertificate.
         public CertificateViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             certificateName = itemView.findViewById(R.id.certificate);
-            deleteButton = itemView.findViewById(R.id.ic_delete_certificate);
+            deleteButton = itemView.findViewById(R.id.ic_delete_cer);
 
             deleteButton.setOnClickListener(v -> {
                 if (listener != null) {

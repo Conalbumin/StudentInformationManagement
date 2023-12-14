@@ -32,7 +32,7 @@
         layout="@layout/list_certificate"/>
 
     <ImageView
-        android:id="@+id/ic_add_user"
+        android:id="@+id/ic_add_cer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
