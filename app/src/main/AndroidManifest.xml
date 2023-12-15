@@ -60,6 +60,12 @@
         </activity>
 
         <activity
+            android:name=".ProfileUserEdit"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:exported="false">
+        </activity>
+
+        <activity
             android:name=".ProfileStudent"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="false">

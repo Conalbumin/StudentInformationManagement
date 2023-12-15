@@ -71,10 +71,8 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
                 String currentUserRole = currentRole;
 
                 // Initialize AdapterUser with the obtained role
-                userAdapter = new AdapterUser(this, new ArrayList<>(), MainActivity.this, currentUserRole);
+                userAdapter = new AdapterUser(this, new ArrayList<>(), currentUserRole);
                 recyclerView.setAdapter(userAdapter);
-
-                // Continue with the rest of your code
                 userRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
                     }
                 });
 
-                userAdapter.setOnItemClickListener(MainActivity.this);
+                userAdapter.setOnItemClickListener(this);
 
                 studentBtn.setOnClickListener(view -> {
                     Intent intent = new Intent(MainActivity.this, StudentManagement.class);
@@ -130,8 +128,18 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
 
     @Override
     public void onItemClick(int position) {
+        // Retrieve the user clicked
+        User selectedUser = userAdapter.getUserList().get(position);
+        Log.e("TAG", "selectedUser " + selectedUser);
+        // Start a new activity (ProfileUserEdit.class) and pass the selected user's UID
+        Intent intent = new Intent(MainActivity.this, ProfileUserEdit.class);
+        intent.putExtra("userId", selectedUser.getUid());
+        Log.e("TAG", "selectedUser id " + selectedUser.getUid());
 
+        startActivity(intent);
     }
+
+
     @Override
     public void onDeleteClick(int position, String userEmail) {
         String userUid = userAdapter.getUserList().get(position).getUid();

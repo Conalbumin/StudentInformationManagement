@@ -36,17 +36,17 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
         void onDeleteClick(int position, String userEmail);
     }
 
-    public AdapterUser(Context context, ArrayList<User> userList, OnItemClickListener listener, String currentUserRole) {
+    public AdapterUser(Context context, ArrayList<User> userList, String currentUserRole) {
         this.context = context;
         this.userList = userList;
-        this.onItemClickListener = listener;
+        this.onItemClickListener = null;
         this.currentUserRole = currentUserRole;
-
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
+
 
     @Override
     public int getItemCount() {
@@ -114,7 +114,6 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
         holder.deleteButton.setOnClickListener(v -> {
             if (onItemClickListener != null && currentUserRole.equals("Admin")) {
                 // Call onDeleteClick method when the delete button is clicked
-                Log.e("TAG", "onBindViewHolder" + user.getEmail());
                 onItemClickListener.onDeleteClick(position, user.getEmail()); // Pass user email
             } else {
                 // Handle the case when the current user is not an admin
@@ -122,6 +121,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
             }
         });
     }
+
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView personName, personNumber, userRole;
@@ -137,6 +137,13 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
             userRole = itemView.findViewById(R.id.userRole);
             profile_pic = itemView.findViewById(R.id.profile_pic);
             deleteButton = itemView.findViewById(R.id.ic_delete_user);
+
+            itemView.setOnClickListener(v -> {
+                if (onItemClickListener != null) {
+                    int position = getAdapterPosition();
+                    onItemClickListener.onItemClick(position);
+                }
+            });
 
             deleteButton.setOnClickListener(v -> {
                 if (onItemClickListener != null) {
