@@ -31,6 +31,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Document;
+
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -42,7 +44,7 @@ public class ProfileStudent extends AppCompatActivity {
     private DatabaseReference studentRef;
     private FirebaseStorage storage;
     private CircleImageView avatar;
-    private TextView id_fullName_TextView;
+    private TextView id_fullName_student;
     private ImageView ic_close;
     private LinearLayout id_layout, gender_layout, date_layout, certificate_layout;
 
@@ -56,7 +58,7 @@ public class ProfileStudent extends AppCompatActivity {
 
         // Initialize views
         avatar = findViewById(R.id.id_profile_image);
-        id_fullName_TextView = findViewById(R.id.id_fullName_TextView);
+        id_fullName_student = findViewById(R.id.id_fullName_student);
         ic_close = findViewById(R.id.ic_close);
         id_layout = findViewById(R.id.id_layout);
         gender_layout = findViewById(R.id.gender_layout);
@@ -79,14 +81,15 @@ public class ProfileStudent extends AppCompatActivity {
             finish(); // Close the activity
         });
 
-        id_fullName_TextView.setOnClickListener(view ->
-                showEditStudentDialog("name", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString(), 0));
+        id_fullName_student.setOnClickListener(view ->
+                showEditStudentDialog("name", "Enter new name", id_fullName_student, id_fullName_student.getText().toString(), 0));
 
         gender_layout.setOnClickListener(view ->
-                showEditStudentDialog("gender", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString(), 0));
+                showEditStudentDialog("gender", "Enter new gender", gender_layout, ((TextView) gender_layout.findViewById(R.id.gender)).getText().toString(), studentPosition));
 
         date_layout.setOnClickListener(view ->
-                showEditStudentDialog("birth", "Enter new name", id_fullName_TextView, id_fullName_TextView.getText().toString(), 0));
+                showEditStudentDialog("birth", "Enter new birthdate", date_layout, ((TextView) date_layout.findViewById(R.id.date)).getText().toString(), studentPosition));
+
 
         certificate_layout.setOnClickListener(view -> {
             Intent intent = new Intent(this, ListCertificate.class);
@@ -107,8 +110,8 @@ public class ProfileStudent extends AppCompatActivity {
     }
 
     private void updateUI(String name, String id, String gender, String date) {
-        // Update UI elements with the data
-        id_fullName_TextView.setText(name);
+        TextView id_fullName_student = findViewById(R.id.id_fullName_student);
+        id_fullName_student.setText(name);
 
         // Find the TextView in id_layout and set the ID
         TextView idTextView = id_layout.findViewById(R.id.id);
@@ -133,9 +136,14 @@ public class ProfileStudent extends AppCompatActivity {
 
                 final EditText input = new EditText(this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setHint(currentValue);
-                builder.setView(input);
 
+                // Check if the view is an instance of TextView before casting
+                if (view instanceof TextView) {
+                    // Cast the view to TextView and get the text
+                    String currentText = ((TextView) view).getText().toString();
+                    input.setHint(currentText);
+                }
+                builder.setView(input);
                 builder.setPositiveButton("Save", (dialog, which) -> {
                     String newValue = input.getText().toString();
                     updateStudentInfo(field, newValue, studentPosition);
@@ -155,8 +163,6 @@ public class ProfileStudent extends AppCompatActivity {
         });
     }
 
-
-
     private void getInfoStudent(int studentPosition) {
         DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
         Log.e("studentPosition", String.valueOf(studentPosition));
@@ -168,7 +174,7 @@ public class ProfileStudent extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot studentSnapshot : dataSnapshot.getChildren()) {
-                        // Extract student information from the dataSnapshot
+                        String studentId = studentSnapshot.child("ID").getValue(String.class);
                         String name = studentSnapshot.child("Name").getValue(String.class);
                         String gender = studentSnapshot.child("Gender").getValue(String.class);
                         String birth = studentSnapshot.child("Birth").getValue(String.class);
@@ -176,7 +182,7 @@ public class ProfileStudent extends AppCompatActivity {
                         Log.e("Student", String.valueOf(studentSnapshot));
 
                         // Call the updateUI method with the obtained information
-                        updateUI(name, String.valueOf(firebaseId), gender, birth);
+                        updateUI(name, studentId, gender, birth);
                         break;  // Assuming there's only one matching student
                     }
                 } else {
@@ -192,29 +198,36 @@ public class ProfileStudent extends AppCompatActivity {
     }
 
     private void updateStudentInfo(String field, String newValue, int studentPosition) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference("students");
-            DatabaseReference studentRef = studentsRef.child(String.valueOf(studentPosition));
-            Log.e("studentRef", String.valueOf(studentRef));
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference("students");
+        DatabaseReference studentRef = studentsRef.child(String.valueOf(studentPosition));
 
-            switch (field.toLowerCase()) {
-                case "name":
-                    studentRef.child("Name").setValue(newValue);
-                    break;
-                case "gender":
-                    studentRef.child("Gender").setValue((newValue));
-                    break;
-                case "birth":
-                    studentRef.child("Birth").setValue(newValue);
-                    break;
-                default:
-                    return;
-            }
-            // Update the UI or perform other tasks
-            getInfoStudent(studentPosition);
+        // Use the actual Firebase ID of the student for updating
+        String studentId = studentRef.getKey();
+        Log.e("studentId", "studentId " + studentId);
+        switch (field.toLowerCase()) {
+            case "name":
+                studentRef.child("Name").setValue(newValue);
+                Toast.makeText(ProfileStudent.this, "Student name updated successfully", Toast.LENGTH_SHORT).show();
+                Log.e("profileStudent", "updateStudentGender " + newValue);
+                break;
+            case "gender":
+                studentRef.child("Gender").setValue(newValue);
+                Toast.makeText(ProfileStudent.this, "Student gender updated successfully", Toast.LENGTH_SHORT).show();
+                Log.e("profileStudent", "updateStudentGender " + newValue);
+                break;
+            case "birth":
+                studentRef.child("Birth").setValue(newValue);
+                Toast.makeText(ProfileStudent.this, "Student birth updated successfully", Toast.LENGTH_SHORT).show();
+                Log.e("profileStudent", "updateStudentGender " + newValue);
+                break;
+            default:
+                return;
         }
+
+        // Update the UI or perform other tasks
+        getInfoStudent(studentPosition);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
