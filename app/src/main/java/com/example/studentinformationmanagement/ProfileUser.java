@@ -161,9 +161,7 @@ public class ProfileUser extends AppCompatActivity {
                 ((TextView) view).setText(newValue);
             }
         });
-
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
         builder.show();
     }
 
@@ -319,7 +317,6 @@ public class ProfileUser extends AppCompatActivity {
     }
     private void selectImage() {
         Log.e("Avatar Click", "Avatar clicked. Starting image selection...");
-
         Toast.makeText(getApplicationContext(), "Profile Pic", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -379,7 +376,7 @@ public class ProfileUser extends AppCompatActivity {
             user.updateProfile(profileUpdates)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Log.d("Firebase Update", "User profile image URL updated successfully.");
+                            Log.e("Firebase Update", "User profile image URL updated successfully.");
 
                             // Now, you need to fetch the updated user information
                             FirebaseUser updatedUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -388,10 +385,6 @@ public class ProfileUser extends AppCompatActivity {
                                 // Get the updated display name and photo URL
                                 String updatedDisplayName = updatedUser.getDisplayName();
                                 Uri updatedPhotoUrl = updatedUser.getPhotoUrl();
-
-                                // You can use these values to update your UI or perform other tasks
-                                Log.d("Updated Display Name", updatedDisplayName);
-                                Log.d("Updated Photo URL", String.valueOf(updatedPhotoUrl));
 
                                 // Load and display the updated profile image
                                 loadProfileImage(userId);
@@ -408,3 +401,5 @@ public class ProfileUser extends AppCompatActivity {
     }
 
 }
+
+

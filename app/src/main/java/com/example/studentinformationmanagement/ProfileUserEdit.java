@@ -367,10 +367,6 @@ public class ProfileUserEdit extends AppCompatActivity {
                                 String updatedDisplayName = updatedUser.getDisplayName();
                                 Uri updatedPhotoUrl = updatedUser.getPhotoUrl();
 
-                                // You can use these values to update your UI or perform other tasks
-                                Log.d("Updated Display Name", updatedDisplayName);
-                                Log.d("Updated Photo URL", String.valueOf(updatedPhotoUrl));
-
                                 // Load and display the updated profile image
                                 loadProfileImage(userId);
 
