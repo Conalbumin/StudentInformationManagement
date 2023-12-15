@@ -90,7 +90,7 @@ public class Login extends AppCompatActivity {
                             if (user != null) {
                                 String userId = user.getUid();
 
-                                checkUserStatus(userId, email);
+                                saveUserHistory(userId);
                                 // Navigate to MainActivity
                                 Intent intent = new Intent(Login.this, MainActivity.class);
                                 startActivity(intent);
@@ -105,36 +105,6 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void checkUserStatus(String userId, String email) {
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    boolean status = dataSnapshot.child("status").getValue(Boolean.class);
-
-                    if (status) {
-                        // User is active, proceed with login
-                        // Save login timestamp under the user's ID
-                        saveUserHistory(userId);
-                        Intent intent = new Intent(Login.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        // User is disabled, show appropriate message
-                        mAuth.signOut();
-                        Toast.makeText(getApplicationContext(), "User is disabled. Please contact support.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("TAG", "Error checking user status: " + error.getMessage());
-            }
-        });
-    }
 
     private void saveUserHistory(String userId) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();

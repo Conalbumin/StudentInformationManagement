@@ -52,7 +52,7 @@ public class UserManagement extends AppCompatActivity {
         userRef.child(userId).setValue(user)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "User added to database successfully.");
+                        Log.e(TAG, "User added to database successfully.");
                     } else {
                         // Handle failure
                         Log.e(TAG, "Failed to add user to database: " + task.getException());
