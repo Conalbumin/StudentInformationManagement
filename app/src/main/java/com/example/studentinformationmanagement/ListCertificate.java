@@ -36,7 +36,7 @@ public class ListCertificate extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ImageView ic_close, ic_add_cer, ic_delete_cer;
     private TextView certificate;
-    private String studentId;
+    private String studentKey;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,12 +59,13 @@ public class ListCertificate extends AppCompatActivity {
         recyclerView.setAdapter(certificateAdapter);
 
         // Retrieve the student ID from the intent
-        studentId = getIntent().getStringExtra("STUDENT_ID");
+        String studentKey = getIntent().getStringExtra("STUDENT_KEY");
+        Log.e("studentKey", "studentKey  " + studentKey);
 
-        if (studentId != null) {
+        if (studentKey != null) {
             // Đặt đường dẫn đến Certificates của sinh viên hiện tại
             DatabaseReference studentCertificatesRef = databaseReference.child(STUDENTS_PATH)
-                    .child(studentId)
+                    .child(studentKey)
                     .child("Certificates");
             studentCertificatesRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -80,11 +81,14 @@ public class ListCertificate extends AppCompatActivity {
                         }
                     }
                     Log.e("Certificate", "student certificate " + certificates);
+
+                    // Update the adapter with the new list of certificates
                     certificateAdapter.setStudentList(certificates);
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    // Handle error if needed
+                    Log.e("Certificate", "student certificate " + null);
                 }
             });
         }
@@ -98,7 +102,7 @@ public class ListCertificate extends AppCompatActivity {
                 if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
                     // If the user has Admin or Manager role, proceed to add a new certificate
                     Intent intent = new Intent(this, AddNewCer.class);
-                    intent.putExtra("STUDENT_ID", studentId);
+                    intent.putExtra("STUDENT_ID", studentKey);
                     startActivity(intent);
                 } else {
                     // If the user doesn't have the required role, show a message or take appropriate action
@@ -174,7 +178,7 @@ public class ListCertificate extends AppCompatActivity {
     private void updateCertificateName(Certificate certificate, String newCertificateName, int position) {
         // Update the certificate name in the database
         DatabaseReference studentCertificatesRef = databaseReference.child("students")
-                .child(studentId)
+                .child(studentKey)
                 .child("Certificates");
 
         // Find the certificate with the same name and update its name
@@ -208,7 +212,7 @@ public class ListCertificate extends AppCompatActivity {
 
         // Get a reference to the Certificates of the current student
         DatabaseReference studentCertificatesRef = databaseReference.child("students")
-                .child(studentId)
+                .child(studentKey)
                 .child("Certificates");
 
         // Check user role before allowing deletion

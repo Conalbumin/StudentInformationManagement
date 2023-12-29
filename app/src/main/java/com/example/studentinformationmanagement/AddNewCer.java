@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class AddNewCer extends AppCompatActivity {
+public class  AddNewCer extends AppCompatActivity {
     private ImageView ic_close;
     private EditText certificateNameEditText;
     private Button btnAddCer;

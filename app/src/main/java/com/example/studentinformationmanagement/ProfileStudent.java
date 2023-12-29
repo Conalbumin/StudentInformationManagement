@@ -34,6 +34,7 @@ import com.google.firebase.storage.StorageReference;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -110,7 +111,7 @@ public class ProfileStudent extends AppCompatActivity {
         });
     }
 
-    private void updateUI(String name, String id, String gender, String date) {
+    private void updateUI(String name, String id, String gender, String birth) {
         TextView id_fullName_student = findViewById(R.id.id_fullName_student);
         id_fullName_student.setText(name);
 
@@ -124,9 +125,8 @@ public class ProfileStudent extends AppCompatActivity {
 
         // Find the TextView in date_layout and set the birth date
         TextView dateTextView = date_layout.findViewById(R.id.date);
-        dateTextView.setText(date);
+        dateTextView.setText(birth);
     }
-
     private void showEditStudentDialog(String field, String hint, View view, String currentValue, String studentKey) {
         UserManagement.getCurrentRole(currentRole -> {
             if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
@@ -199,6 +199,24 @@ public class ProfileStudent extends AppCompatActivity {
                     String gender = dataSnapshot.child("Gender").getValue(String.class);
                     String birth = dataSnapshot.child("Birth").getValue(String.class);
 
+                    // Fetch certificates information from the HashMap
+                    ArrayList<String> certificates = new ArrayList<>();
+                    DataSnapshot certificatesSnapshot = dataSnapshot.child("Certificates");
+                    for (DataSnapshot certificateSnapshot : certificatesSnapshot.getChildren()) {
+                        // Assuming that each certificate is stored as a HashMap with a "name" property
+                        HashMap<String, Object> certificateMap = (HashMap<String, Object>) certificateSnapshot.getValue();
+                        if (certificateMap != null && certificateMap.containsKey("name")) {
+                            String certificateName = (String) certificateMap.get("name");
+                            certificates.add(certificateName);
+                        }
+                    }
+
+                    Log.e("ProfileStudent", "Student ID: " + studentId);
+                    Log.e("ProfileStudent", "Student Name: " + name);
+                    Log.e("ProfileStudent", "Student Gender: " + gender);
+                    Log.e("ProfileStudent", "Student Birth: " + birth);
+                    Log.e("ProfileStudent", "Certificates: " + certificates);
+
                     // Call the updateUI method with the obtained information
                     updateUI(name, studentId, gender, birth);
                 } else {
@@ -212,8 +230,6 @@ public class ProfileStudent extends AppCompatActivity {
             }
         });
     }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
