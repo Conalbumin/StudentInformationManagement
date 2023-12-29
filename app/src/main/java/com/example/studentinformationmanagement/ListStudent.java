@@ -64,7 +64,8 @@ public class ListStudent extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Student> students = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Student student = new Student((Map<String, Object>) snapshot.getValue());
+                    String key = snapshot.getKey(); // Get the key from Firebase
+                    Student student = new Student(key, (Map<String, Object>) snapshot.getValue());
                     students.add(student);
                 }
                 studentAdapter.setStudentList(students);
@@ -87,12 +88,15 @@ public class ListStudent extends AppCompatActivity {
         studentAdapter.setOnItemClickListener(new AdapterStudent.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
-                // Pass the position of the selected student to the ProfileStudent activity
-                intent.putExtra("STUDENT_POSITION", position);
-                Log.e("studentAdapter", "di toi profile student");
-                startActivity(intent);
+                Student student = studentAdapter.getStudent(position);
+                if (student != null) {
+                    Intent intent = new Intent(ListStudent.this, ProfileStudent.class);
+                    // Pass the key of the selected student to the ProfileStudent activity
+                    intent.putExtra("STUDENT_KEY", student.getKey());
+                    startActivity(intent);
+                }
             }
+
 
             @Override
             public void onDeleteIconClick(int adapterPosition) {

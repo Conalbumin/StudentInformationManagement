@@ -11,15 +11,14 @@ public class User {
     private String Role;
     private String uid;
 
-
     // Constructor
     public User(String Email, String Name, int Age, String PhoneNumber, boolean Status, String Role) {
         this.Email = Email;
         this.Name = Name;
         this.Age = Age;
         this.PhoneNumber = PhoneNumber;
-        this.Status = Status;      // on/off
-        this.Role = Role;    // admin/manAger/employee
+        this.Status = Status; // on/off
+        this.Role = Role; // admin/manAger/employee
     }
 
     public String getUid() {
@@ -30,7 +29,8 @@ public class User {
         this.uid = uid;
     }
 
-    public User(){}
+    public User() {
+    }
 
     public String getEmail() {
         return Email;

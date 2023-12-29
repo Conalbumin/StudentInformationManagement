@@ -9,11 +9,14 @@ public class Student {
     private String ID;
     private String Birth;
     private String Name;
+    private String key; // Add a field to store the key
+
 
     // Constructors, getters, setters
 
     // Example constructor
-    public Student(String ID, String Name, String Birth, String Gender, ArrayList<Certificate> Certificates) {
+    public Student(String key, String ID, String Name, String Birth, String Gender, ArrayList<Certificate> Certificates) {
+        this.key = key;
         this.ID = ID;
         this.Name = Name;
         this.Birth = Birth;
@@ -26,7 +29,8 @@ public class Student {
         this.Certificates = certificates;
     }
 
-    public Student(Map<String, Object> data) {
+    public Student(String key, Map<String, Object> data) {
+        this.key = key;
         this.Certificates = parseCertificates(data);
         this.Gender = data.get("Gender").toString();
         this.ID = data.get("ID").toString();
@@ -58,6 +62,9 @@ public class Student {
     public Student() {
     }
     // Getters and setters for each field
+    public String getKey() {
+        return key;
+    }
 
     public String getID() {
         return ID;

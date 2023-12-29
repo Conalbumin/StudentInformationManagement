@@ -36,7 +36,6 @@ public class AddNewStudent extends AppCompatActivity {
             finish(); // Close the activity
         });
 
-        // Set onClickListener for add student button
         btnAddStudent.setOnClickListener(view -> {
             // Retrieve data from UI elements
             String studentId = txtStudentId.getText().toString();
@@ -47,13 +46,14 @@ public class AddNewStudent extends AppCompatActivity {
 
             // Create a new student with or without certificates
             Student newStudent;
+
             if (!studentCer.isEmpty()) {
                 // If certificates are provided, split and create separate Certificate objects
                 ArrayList<Certificate> certificates = createCertificatesFromString(studentCer);
-                newStudent = new Student(studentId, studentName, userDate, userGender, certificates);
+                newStudent = new Student(null, studentId, studentName, userDate, userGender, certificates);
             } else {
                 // If no certificates are provided, create a student without certificates
-                newStudent = new Student(studentId, studentName, userDate, userGender, null);
+                newStudent = new Student(null, studentId, studentName, userDate, userGender, null);
             }
 
             // Call the method to add a new student
@@ -62,6 +62,7 @@ public class AddNewStudent extends AppCompatActivity {
             // Close the activity
             finish();
         });
+
     }
 
     private ArrayList<Certificate> createCertificatesFromString(String certificatesString) {
