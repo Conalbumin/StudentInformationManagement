@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.UserWriteRecord;
 
 import java.util.Scanner;
 
@@ -32,7 +33,7 @@ public class UserManagement extends AppCompatActivity {
     private static DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference userRef = databaseReference.child("users");
 
-    public static void addNewUser(String email, String password, String name, int age, String phoneNumber, boolean status, String role) {
+    public static void addNewUser(String email, String password, String name, int age, String phoneNumber, boolean status, String role, UserAddedCallback callback) {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -40,7 +41,7 @@ public class UserManagement extends AppCompatActivity {
                         if (user != null) {
                             // Update user profile in authentication
                             User userData = new User(email, name, age, phoneNumber, status, role);
-                            addUserToDatabase(user.getUid(), userData);
+                            addUserToDatabase(user.getUid(), userData, callback);
                         }
                     } else {
                         Log.e(TAG, "Failed to add user to database: " + task.getException());
@@ -48,11 +49,12 @@ public class UserManagement extends AppCompatActivity {
                 });
     }
 
-    private static void addUserToDatabase(String userId, User user) {
+    private static void addUserToDatabase(String userId, User user, UserAddedCallback callback) {
         userRef.child(userId).setValue(user)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.e(TAG, "User added to database successfully.");
+                        callback.onUserAdded(); // Notify the callback that user addition is complete
                     } else {
                         // Handle failure
                         Log.e(TAG, "Failed to add user to database: " + task.getException());
@@ -93,5 +95,9 @@ public class UserManagement extends AppCompatActivity {
 
     interface RoleCallback {
         void onRoleReceived(String role);
+    }
+
+    interface UserAddedCallback {
+        void onUserAdded();
     }
 }
