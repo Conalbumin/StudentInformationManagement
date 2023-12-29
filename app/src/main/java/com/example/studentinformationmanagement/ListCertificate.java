@@ -59,7 +59,7 @@ public class ListCertificate extends AppCompatActivity {
         recyclerView.setAdapter(certificateAdapter);
 
         // Retrieve the student ID from the intent
-        String studentKey = getIntent().getStringExtra("STUDENT_KEY");
+        studentKey = getIntent().getStringExtra("STUDENT_KEY");
         Log.e("studentKey", "studentKey  " + studentKey);
 
         if (studentKey != null) {
