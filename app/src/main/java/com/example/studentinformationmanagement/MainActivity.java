@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         auth = FirebaseAuth.getInstance();
         searchBar = findViewById(R.id.searchBar);
 
+        setupSearchView();
+
         recyclerView = findViewById(R.id.listviewUser);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -145,6 +147,23 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         String userUid = userAdapter.getUserList().get(position).getUid();
         // Call the public method in AdapterUser to delete the user by email and UID
         userAdapter.deleteUserByEmail(userEmail, userUid);
+    }
+
+    private void setupSearchView() {
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Handle the query submission if needed
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("SearchQuery", "Query: " + newText);
+                userAdapter.search(newText);
+                return true;
+            }
+        });
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.studentinformationmanagement;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +23,14 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder> {
     private static ArrayList<User> userList;
+    private ArrayList<User> backupList;
+
     private String currentUserRole;
     private Context context;
     private static OnItemClickListener onItemClickListener;
@@ -39,6 +43,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
     public AdapterUser(Context context, ArrayList<User> userList, String currentUserRole) {
         this.context = context;
         this.userList = userList;
+        this.backupList = new ArrayList<>(userList);
         this.onItemClickListener = null;
         this.currentUserRole = currentUserRole;
     }
@@ -59,6 +64,7 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
 
     public void setUserList(ArrayList<User> userList) {
         this.userList = userList;
+        this.backupList = new ArrayList<>(userList);
         notifyDataSetChanged();
     }
 
@@ -93,6 +99,33 @@ public class AdapterUser extends RecyclerView.Adapter<AdapterUser.UserViewHolder
                 Log.e("TAG", "Error querying the database: " + error.getMessage());
             }
         });
+    }
+
+    public void search(String query) {
+        ArrayList<User> filteredList = new ArrayList<>();
+
+        if (TextUtils.isEmpty(query)) {
+            // If the query is empty, restore the original list
+            filteredList.addAll(backupList);
+        } else {
+            // Convert the query to lowercase for case-insensitive search
+            String lowercaseQuery = query.toLowerCase(Locale.getDefault());
+
+            // Filter the list based on the query
+            for (User user : backupList) {
+                if (user.getName().toLowerCase(Locale.getDefault()).contains(lowercaseQuery) ||
+                        user.getEmail().toLowerCase(Locale.getDefault()).contains(lowercaseQuery) ||
+                        user.getUid().toLowerCase(Locale.getDefault()).contains(lowercaseQuery) ||
+                        user.getPhoneNumber().toLowerCase(Locale.getDefault()).contains(lowercaseQuery)) {
+                    filteredList.add(user);
+                }
+            }
+        }
+
+        // Update the adapter with the filtered list
+        userList.clear();
+        userList.addAll(filteredList);
+        notifyDataSetChanged();
     }
 
 

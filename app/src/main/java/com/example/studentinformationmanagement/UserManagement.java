@@ -3,6 +3,7 @@ package com.example.studentinformationmanagement;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.core.UserWriteRecord;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserManagement extends AppCompatActivity {
@@ -92,7 +94,6 @@ public class UserManagement extends AppCompatActivity {
         }
     }
 
-
     interface RoleCallback {
         void onRoleReceived(String role);
     }
@@ -100,4 +101,5 @@ public class UserManagement extends AppCompatActivity {
     interface UserAddedCallback {
         void onUserAdded();
     }
+
 }
