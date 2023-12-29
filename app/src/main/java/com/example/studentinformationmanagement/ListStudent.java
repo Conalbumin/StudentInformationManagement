@@ -97,14 +97,12 @@ public class ListStudent extends AppCompatActivity {
                 }
             }
 
-
             @Override
             public void onDeleteIconClick(int adapterPosition) {
                 // Handle delete icon click
                 Student student = studentAdapter.getStudent(adapterPosition);
                 if (student != null) {
                     deleteStudent(student);
-                    Log.e("studentAdapter", "deleteStudent");
                 }
             }
         });
@@ -123,8 +121,6 @@ public class ListStudent extends AppCompatActivity {
     private void deleteStudent(Student student) {
         UserManagement.getCurrentRole(currentRole -> {
             if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
-                // If the user has Admin or Manager role, proceed to delete the student
-                // Get a reference to the "students" node in the database
                 DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference().child("students");
 
                 // Find the student key in the database
@@ -134,10 +130,16 @@ public class ListStudent extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             // Remove the student from the database
-                            snapshot.getRef().removeValue();
+                            snapshot.getRef().removeValue().addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.e("Student delete", "Student deleted successfully");
+                                    Toast.makeText(ListStudent.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Log.e("Student delete", "Student deletion failed");
+                                    Toast.makeText(ListStudent.this, "Student deletion failed", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
-                        Log.e("Student delete", "Student deleted successfully");
-                        Toast.makeText(ListStudent.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
