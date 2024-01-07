@@ -69,7 +69,6 @@ public class ListStudent extends AppCompatActivity {
                     students.add(student);
                 }
                 studentAdapter.setStudentList(students);
-
                 studentAdapter.setOnDeleteIconClickListener(position -> {
                     // Handle delete icon click
                     Student student = studentAdapter.getStudent(position);

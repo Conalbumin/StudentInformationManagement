@@ -1,8 +1,10 @@
 package com.example.studentinformationmanagement;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,8 +26,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudentManagement extends AppCompatActivity {
@@ -31,10 +41,12 @@ public class StudentManagement extends AppCompatActivity {
     private static FirebaseAuth auth;
     private static FirebaseUser currentUser;
     private static DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    private static DatabaseReference studentRef = databaseReference.child("student");
+    private static DatabaseReference studentRef = databaseReference.child("students");
     private AppCompatButton userBtn, studentBtn, profileBtn;
     private LinearLayout btnStudentList, btnAddStudent, btnAddStudentFromCSV, item_user,
             btnExportStudentToCSV, btnAddCertificateFromCSV, btnExportCertificateToCSV;
+    private ArrayList<Student> studentList = new ArrayList<>();
+
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +68,34 @@ public class StudentManagement extends AppCompatActivity {
         btnAddCertificateFromCSV = findViewById(R.id.btnAddCertificateFromCSV);
         btnExportCertificateToCSV = findViewById(R.id.btnExportCertificateToCSV);
 
+        AdapterStudent studentAdapter = new AdapterStudent(this, new ArrayList<>());
+
         fetchAndDisplayUserInfo();
+        studentRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                studentList.clear(); // Clear the list before adding new data
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String key = snapshot.getKey(); // Get the key from Firebase
+                    Student student = new Student(key, (Map<String, Object>) snapshot.getValue());
+                    studentList.add(student);
+                }
+
+                // Log the size of the studentList
+                Log.e(TAG, "Number of students: " + studentList.size());
+
+                // Update the list in your adapter
+                studentAdapter.setStudentList(studentList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error if needed
+                Log.e(TAG, "Database error: " + error.getMessage());
+            }
+        });
+
+
 
         profileBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, ProfileUser.class);
@@ -95,11 +134,14 @@ public class StudentManagement extends AppCompatActivity {
         });
 
         btnAddStudentFromCSV.setOnClickListener(view -> {
-            // Handle btnAddStudentFromCSV click
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("text/csv");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, 1);
         });
 
         btnExportStudentToCSV.setOnClickListener(view -> {
-            // Handle btnExportStudentToCSV click
+            exportStudentListToCSV();
         });
 
         btnAddCertificateFromCSV.setOnClickListener(view -> {
@@ -112,25 +154,16 @@ public class StudentManagement extends AppCompatActivity {
     }
 
     private void fetchAndDisplayUserInfo() {
-        // Get the user ID of the current user
         String userId = currentUser.getUid();
-
-        // Assuming you have a method to fetch user information from the database
-        // Modify the method accordingly based on your database structure
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // User information found, create a User object
                     User user = dataSnapshot.getValue(User.class);
-
-                    // Assuming you have a method to display user information in the list
-                    // Modify the method accordingly based on your list structure
                     displayUserInList(user);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle error if needed
@@ -184,4 +217,86 @@ public class StudentManagement extends AppCompatActivity {
                     Log.e("AddNewStudent", "Error adding new student to database", e);
                 });
     }
+
+     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            Uri selectedFileUri = data.getData();
+            if (selectedFileUri != null) {
+                try {
+                    importStudentsFromCSV(selectedFileUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    // Function to import students from a CSV file
+    private void importStudentsFromCSV(Uri fileUri) throws IOException {
+        // Read the content of the CSV file
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(fileUri)));
+        String line;
+        List<Student> importedStudents = new ArrayList<>();
+
+        while ((line = reader.readLine()) != null) {
+            // Split the CSV line into fields
+            String[] fields = line.split(",");
+
+            // Assuming the CSV format is: ID,Name,Gender,Birth
+            if (fields.length == 4) {
+                String id = fields[0].trim();
+                String name = fields[1].trim();
+                String gender = fields[2].trim();
+                String birth = fields[3].trim();
+
+                // Create a new student and add it to the list
+                Student student = new Student(null, id, name, birth, gender, null);
+                importedStudents.add(student);
+            }
+        }
+
+        // Add imported students to the database
+        for (Student student : importedStudents) {
+            addNewStudentToDatabase(student);
+        }
+
+        // Close the reader
+        reader.close();
+    }
+
+    private void exportStudentListToCSV() {
+        try {
+            // Create a new file in the Downloads directory
+            File csvFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "student_list.csv");
+            csvFile.createNewFile();
+
+            // Write the student list to the CSV file
+            FileOutputStream outputStream = new FileOutputStream(csvFile);
+            for (Student student : studentList) {
+                String csvLine = student.getID() + "," + student.getName() + "," + student.getGender() + "," + student.getBirth() + "\n";
+                outputStream.write(csvLine.getBytes());
+            }
+            outputStream.close();
+
+            // Log success message with file path
+            Log.e(TAG, "Student list exported to " + csvFile.getAbsolutePath());
+
+            // Show a message indicating success
+            Toast.makeText(this, "Student list exported to " + csvFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            // Log failure message
+            Log.e(TAG, "Failed to export student list", e);
+
+            // Show a message indicating failure
+            Toast.makeText(this, "Failed to export student list", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
+
+
