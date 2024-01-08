@@ -1,43 +1,40 @@
 {
   "0": {
     "Birth": "20/10/2003",
-    "Certificates": [
-      {
-        "name": "Microsoft Certified: Azure Fundamentals"
-      },
-      {
+    "Certificates": {
+      "-NnZMe6bvyIaUvso0gPB": {
         "name": "CCNA"
+      },
+      "-NnZNHbby3xF-jTzlsmh": {
+        "name": "Microsoft Certified: Azure Fundamentals"
       }
-    ],
+    },
     "Gender": "Male",
     "ID": "001",
     "Name": "Lam Duy"
   },
   "1": {
     "Birth": "11/06/2003",
-    "Certificates": [
-      {
+    "Certificates": {
+      "-NnZNUFrFbUTjwNWBMfu": {
         "name": "Cisco Certified Network Associate (CCNA)"
       },
-      {
+      "-NnZNWSw-JKFjm8Ae46c": {
         "name": "Project Management Professional (PMP)"
       }
-    ],
+    },
     "Gender": "Male",
     "ID": "002",
-    "Name": "ManhPhi"
+    "Name": "Manh Phi"
   },
   "2": {
     "Birth": "15/07/2000",
     "Certificates": {
-      "1": {
-        "name": "AWS Certified Solutions Architect"
-      },
-      "-Nli-Dz3PHm7o0a_cihc": {
-        "name": "MOS 900"
-      },
       "-NliQNiM4XdI9353Vqg_": {
         "name": "IL 8.0"
+      },
+      "-NnZNa4OuWCSmVVnH9gc": {
+        "name": "AWS Certified Solutions Architect"
       }
     },
     "Gender": "Female",
@@ -46,70 +43,70 @@
   },
   "3": {
     "Birth": "02/03/2004",
-    "Certificates": [
-      {
+    "Certificates": {
+      "-NnZNe2pcNqJNDT1JqGe": {
         "name": "Certified Ethical Hacker (CEH)"
       },
-      {
+      "-NnZNfv8tFUwfGj7Q9H0": {
         "name": "AWS Certified Solutions Architect"
       }
-    ],
+    },
     "Gender": "male",
     "ID": "004",
     "Name": "QuocAnh"
   },
   "4": {
     "Birth": "07/12/2001",
-    "Certificates": [
-      {
+    "Certificates": {
+      "-NnZNk0YjO0zec7MtM2q": {
         "name": "AWS Certified Solutions Architect"
       },
-      {
+      "-NnZNlf7dlmX6RHSFF-9": {
         "name": "Certified Ethical Hacker (CEH)"
       }
-    ],
+    },
     "Gender": "female",
     "ID": "005",
     "Name": "ThuyLinh"
   },
   "5": {
     "Birth": "19/05/2000",
-    "Certificates": [
-      {
+    "Certificates": {
+      "-NnZNpefV7c7SLzpKFFe": {
         "name": "Certified ScrumMaster (CSM)"
       },
-      {
+      "-NnZNqzwpEk6jNin7I6D": {
         "name": "CompTIA Security+"
       }
-    ],
+    },
     "Gender": "male",
     "ID": "006",
     "Name": "TuanKiet"
   },
   "6": {
     "Birth": "08/08/2003",
-    "Certificates": [
-      {
+    "Certificates": {
+      "-NnZNwC6b5wXa3VMBMDh": {
         "name": "CompTIA Security+"
       },
-      {
+      "-NnZNy9GDTLcLm28JI-r": {
         "name": "IL 8.0"
       }
-    ],
+    },
     "Gender": "male",
     "ID": "007",
     "Name": "HoangLong"
   },
   "7": {
     "Birth": "30/04/2005",
-    "Certificates": [
-      {
+    "Certificates": {
+      "-NnZO2tQRJH1fsFFS_QM": {
         "name": "Google Cloud Professional Cloud Architect"
       },
-      {
+      "-NnZO4oBdanAWtqZgYTf": {
         "name": "TOEIC 890"
       }
-    ],
+    },
     "Gender": "female",
     "ID": "008",
     "Name": "NgocHuong"
@@ -117,11 +114,11 @@
   "8": {
     "Birth": "12/10/2002",
     "Certificates": {
-      "0": {
-        "name": "Adobe Certified Expert (ACE)"
-      },
       "-NllsiRZvXE5u-s6lTlN": {
         "name": "IL 6.5"
+      },
+      "-NnZOGKimMg6lNzJEY7z": {
+        "name": "Certified Information Systems Security Professional (CISSP)"
       }
     },
     "Gender": "male",
@@ -131,26 +128,35 @@
   "9": {
     "Birth": "03/07/2001",
     "Certificates": {
-      "0": {
-        "name": "Certified Information Systems Security Professional (CISSP)"
+      "-NnZPbwWABGq8RkqBv5P": {
+        "name": "MOS 1000"
       },
-      "-NlllvFGr5KUlTPI1bwo": {
-        "name": "Apis 180"
+      "-NnZPmqJE-J7xzQqgrtE": {
+        "name": "IL 6.5"
       }
     },
     "Gender": "Female",
     "ID": "010",
-    "Name": "MyHanh"
+    "Name": "My Hanh"
   },
   "-Nllst5LcjeiQHF6dwsA": {
-    "Birth": "16/12/2000",
-    "Certificates": [
-      {
-        "name": "MOS 1000"
+    "Birth": "11/02/2000",
+    "Certificates": {
+      "-NmprhLWxLMdrxr_xOqp": {
+        "name": "IL 7.0"
+      },
+      "-NmprkTiVWoIeiigFYgz": {
+        "name": "TOIEC 800"
       }
-    ],
-    "Gender": "Male",
+    },
+    "Gender": "Female",
     "ID": "011",
-    "Name": "New Student"
+    "Name": "Student"
+  },
+  "-Nmpu31o_OqjWpedvb2G": {
+    "Birth": "20/11/2002",
+    "Gender": "Male",
+    "ID": "012",
+    "Name": "Student added"
   }
 }

@@ -1,6 +1,7 @@
 package com.example.studentinformationmanagement;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -59,14 +60,20 @@ public class  AddNewCer extends AppCompatActivity {
             String certificateKey = studentCertificatesRef.push().getKey();
 
             // Add the certificate to the database
-            studentCertificatesRef.child(certificateKey).setValue(certificate);
-
-            // Notify the user that the certificate has been added
-            Toast.makeText(this, "Certificate added successfully", Toast.LENGTH_SHORT).show();
+            studentCertificatesRef.child(certificateKey).setValue(certificate)
+                    .addOnSuccessListener(aVoid -> {
+                        // Notify the user that the certificate has been added
+                        Toast.makeText(this, "Certificate added successfully", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle failure
+                        Log.e("tag", "Error adding certificate to database", e);
+                    });
         } else {
             // Notify the user that the certificate name is empty
             Toast.makeText(this, "Please enter a certificate name", Toast.LENGTH_SHORT).show();
         }
         finish();
     }
+
 }

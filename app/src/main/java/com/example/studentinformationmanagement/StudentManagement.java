@@ -75,9 +75,22 @@ public class StudentManagement extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 studentList.clear(); // Clear the list before adding new data
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String key = snapshot.getKey(); // Get the key from Firebase
                     Student student = new Student(key, (Map<String, Object>) snapshot.getValue());
+
+                    // Parse certificates data
+                    DataSnapshot certificatesSnapshot = snapshot.child("Certificates");
+                    if (certificatesSnapshot.exists()) {
+                        ArrayList<Certificate> certificates = new ArrayList<>();
+                        for (DataSnapshot certDataSnapshot : certificatesSnapshot.getChildren()) {
+                            String certName = (String) certDataSnapshot.child("name").getValue();
+                            certificates.add(new Certificate(certName));
+                        }
+                        student.setCertificates(certificates);
+                    }
+
                     studentList.add(student);
                 }
 
@@ -94,6 +107,7 @@ public class StudentManagement extends AppCompatActivity {
                 Log.e(TAG, "Database error: " + error.getMessage());
             }
         });
+
 
 
 
@@ -273,30 +287,52 @@ public class StudentManagement extends AppCompatActivity {
             File csvFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "student_list.csv");
             csvFile.createNewFile();
 
-            // Write the student list to the CSV file
-            FileOutputStream outputStream = new FileOutputStream(csvFile);
+            // Write the header line to the CSV file
+            FileOutputStream headerStream = new FileOutputStream(csvFile);
+            String headerLine = "ID,Name,Gender,Birth,Certificates\n";
+            headerStream.write(headerLine.getBytes());
+            headerStream.close();
+
+            // Append the student list to the CSV file
+            FileOutputStream outputStream = new FileOutputStream(csvFile, true);
             for (Student student : studentList) {
-                String csvLine = student.getID() + "," + student.getName() + "," + student.getGender() + "," + student.getBirth() + "\n";
+                String certificatesString = getCertificatesString(student.getCertificates());
+                String csvLine = student.getID() + "," + student.getName() + "," + student.getGender()
+                        + "," + student.getBirth() + "," + certificatesString + "\n";
                 outputStream.write(csvLine.getBytes());
+                Log.e(TAG, "Student list exported " + csvLine);
+
             }
             outputStream.close();
-
-            // Log success message with file path
             Log.e(TAG, "Student list exported to " + csvFile.getAbsolutePath());
-
-            // Show a message indicating success
             Toast.makeText(this, "Student list exported to " + csvFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-
         } catch (IOException e) {
             e.printStackTrace();
-
-            // Log failure message
             Log.e(TAG, "Failed to export student list", e);
-
-            // Show a message indicating failure
             Toast.makeText(this, "Failed to export student list", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    private String getCertificatesString(ArrayList<Certificate> certificates) {
+        if (certificates == null || certificates.isEmpty()) {
+            return ""; // Return an empty string if certificates are null or empty
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Certificate certificate : certificates) {
+            if (certificate != null && certificate.getName() != null) {
+                stringBuilder.append(certificate.getName()).append(" & ");
+            }
+        }
+        // Remove the trailing comma and space
+        if (stringBuilder.length() > 2) {
+            stringBuilder.setLength(stringBuilder.length() - 2);
+        }
+        return stringBuilder.toString();
+    }
+
+
+
 }
 
 

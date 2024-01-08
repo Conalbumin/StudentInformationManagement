@@ -44,12 +44,19 @@ public class Student {
         // Get the "Certificates" field
         Object certificatesData = data.get("Certificates");
 
-        // Check if it's a list
-        if (certificatesData instanceof ArrayList) {
-            for (Object certData : (ArrayList<Object>) certificatesData) {
-                if (certData instanceof Map) {
+        // Check if it's a map
+        if (certificatesData instanceof Map) {
+            Map<String, Object> certificatesMap = (Map<String, Object>) certificatesData;
+
+            // Iterate through each entry in the map
+            for (Map.Entry<String, Object> entry : certificatesMap.entrySet()) {
+                String certificateId = entry.getKey();
+                Object certificateData = entry.getValue();
+
+                // Check if the certificateData is a map
+                if (certificateData instanceof Map) {
                     // Use the proper key ("name") to retrieve the certificate name
-                    Object certName = ((Map<String, Object>) certData).get("name");
+                    Object certName = ((Map<String, Object>) certificateData).get("name");
                     if (certName != null && certName instanceof String) {
                         certificates.add(new Certificate((String) certName));
                     }
@@ -58,6 +65,7 @@ public class Student {
         }
         return certificates;
     }
+
 
     public Student() {
     }

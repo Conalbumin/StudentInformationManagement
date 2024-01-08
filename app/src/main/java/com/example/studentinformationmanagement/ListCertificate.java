@@ -215,36 +215,33 @@ public class ListCertificate extends AppCompatActivity {
                 .child(studentKey)
                 .child("Certificates");
 
-        // Check user role before allowing deletion
-        UserManagement.getCurrentRole(currentRole -> {
-            if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
-                // User has Admin or Manager role, proceed with deletion
-                findCertificateKey(studentCertificatesRef, certificate, position);
-            } else {
-                // User does not have the required role, show a message or take appropriate action
-                Toast.makeText(ListCertificate.this, "You do not have the required role to delete a certificate", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+        // Find the certificate with the same name and remove it from the database
+        studentCertificatesRef.orderByChild("name").equalTo(certificate.getName())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            // Remove the certificate from the database
+                            snapshot.getRef().removeValue()
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Notify the user that the certificate has been deleted
+                                        Toast.makeText(ListCertificate.this, "Certificate deleted successfully", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Handle failure
+                                        Log.e("tag", "Error deleting certificate from database", e);
+                                    });
+                        }
+                    }
 
-    private void findCertificateKey(DatabaseReference ref, Certificate certificate, int position) {
-        Query query = ref.orderByChild("name").equalTo(certificate.getName());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Remove the certificate from the database
-                    snapshot.getRef().removeValue();
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle error if needed
+                    }
+                });
 
-                    // Remove the certificate from the RecyclerView
-                    certificateAdapter.removeCertificate(position);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error if needed
-            }
-        });
+        // Remove the certificate from the RecyclerView
+        certificateAdapter.removeCertificate(position);
     }
 
 }
