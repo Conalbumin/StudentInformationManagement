@@ -149,7 +149,7 @@ public class StudentManagement extends AppCompatActivity {
 
         btnAddStudentFromCSV.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("text/csv");
+            intent.setType("text/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, 1);
         });
@@ -253,33 +253,54 @@ public class StudentManagement extends AppCompatActivity {
         // Read the content of the CSV file
         BufferedReader reader = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(fileUri)));
         String line;
-        List<Student> importedStudents = new ArrayList<>();
+        int importedStudentCount = 0;
+        boolean isFirstLine = true; // Flag to skip the first line (header)
 
         while ((line = reader.readLine()) != null) {
+            // Skip the first line (header)
+            if (isFirstLine) {
+                isFirstLine = false;
+                continue;
+            }
+
             // Split the CSV line into fields
             String[] fields = line.split(",");
 
-            // Assuming the CSV format is: ID,Name,Gender,Birth
-            if (fields.length == 4) {
+            // Assuming the CSV format is: ID,Name,Gender,Birth,Certificates
+            if (fields.length >= 4) {
                 String id = fields[0].trim();
                 String name = fields[1].trim();
                 String gender = fields[2].trim();
                 String birth = fields[3].trim();
 
-                // Create a new student and add it to the list
-                Student student = new Student(null, id, name, birth, gender, null);
-                importedStudents.add(student);
-            }
-        }
+                // Parse Certificates if available
+                ArrayList<Certificate> certificates = new ArrayList<>();
+                if (fields.length > 4) {
+                    String[] certificatesArray = fields[4].split("&");
+                    for (String cert : certificatesArray) {
+                        certificates.add(new Certificate(cert.trim()));
+                    }
+                }
 
-        // Add imported students to the database
-        for (Student student : importedStudents) {
-            addNewStudentToDatabase(student);
+                // Create a new student and add it to the database
+                Student student = new Student(null, id, name, birth, gender, certificates);
+                addNewStudentToDatabase(student);
+                importedStudentCount++;
+            }
         }
 
         // Close the reader
         reader.close();
+
+        // Show a Toast message indicating the import result
+        String toastMessage = (importedStudentCount > 0) ?
+                "Successfully imported " + importedStudentCount + " students" :
+                "No students imported";
+
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
     }
+
+
 
     private void exportStudentListToCSV() {
         try {
