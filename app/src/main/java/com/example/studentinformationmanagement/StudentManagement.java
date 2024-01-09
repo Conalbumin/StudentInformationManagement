@@ -1,6 +1,7 @@
 package com.example.studentinformationmanagement;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,8 +28,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -159,11 +162,11 @@ public class StudentManagement extends AppCompatActivity {
         });
 
         btnAddCertificateFromCSV.setOnClickListener(view -> {
-            // Handle btnAddCertificateFromCSV click
+            showChooseStudentDialog(true);
         });
 
         btnExportCertificateToCSV.setOnClickListener(view -> {
-            // Handle btnExportCertificateToCSV click
+            showChooseStudentDialog(false);
         });
     }
 
@@ -232,22 +235,6 @@ public class StudentManagement extends AppCompatActivity {
                 });
     }
 
-     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            Uri selectedFileUri = data.getData();
-            if (selectedFileUri != null) {
-                try {
-                    importStudentsFromCSV(selectedFileUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     // Function to import students from a CSV file
     private void importStudentsFromCSV(Uri fileUri) throws IOException {
         // Read the content of the CSV file
@@ -300,8 +287,6 @@ public class StudentManagement extends AppCompatActivity {
         Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
     }
 
-
-
     private void exportStudentListToCSV() {
         try {
             // Create a new file in the Downloads directory
@@ -334,7 +319,6 @@ public class StudentManagement extends AppCompatActivity {
         }
     }
 
-
     private String getCertificatesString(ArrayList<Certificate> certificates) {
         if (certificates == null || certificates.isEmpty()) {
             return ""; // Return an empty string if certificates are null or empty
@@ -352,7 +336,93 @@ public class StudentManagement extends AppCompatActivity {
         return stringBuilder.toString();
     }
 
+    private void showChooseStudentDialog(boolean isImport) {
+        List<String> studentNames = new ArrayList<>();
+        for (Student student : studentList) {
+            studentNames.add(student.getName());
+        }
 
+        CharSequence[] items = studentNames.toArray(new CharSequence[0]);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose a student");
+
+        builder.setItems(items, (dialog, item) -> {
+            Student selectedStudent = studentList.get(item);
+
+            if (isImport) {
+                // Open file picker to import certificates for the selected student
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("text/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(intent, 2); // Use a different requestCode for certificates
+            } else {
+                // Export certificates for the selected student
+                exportCertificatesToCSV(selectedStudent);
+            }
+        });
+
+        builder.show();
+    }
+
+    private void importCertificatesFromCSV(Student student, Uri fileUri) throws IOException {
+        // Read the content of the CSV file and import certificates for the selected student
+        // Use the student object to identify which student to update
+        // ...
+
+        // Show a Toast message indicating the import result
+        String toastMessage = "Successfully imported certificates for " + student.getName();
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private void exportCertificatesToCSV(Student student) {
+        try {
+            // Create a new file in the Downloads directory
+            File csvFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "certificates_" + student.getName() + ".csv");
+            csvFile.createNewFile();
+
+            // Use BufferedWriter with explicitly specified line separator
+            BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
+
+            // Write the header line to the CSV file
+            String headerLine = "Certificate\n";
+            writer.write(headerLine);
+
+            // Append the certificates to the CSV file
+            for (Certificate certificate : student.getCertificates()) {
+                String csvLine = certificate.getName() + "\t\n";
+                writer.write(csvLine);
+                Log.e(TAG, "Certificates exported to " + csvLine); // Add this log statement
+            }
+
+            // Close the writer
+            writer.close();
+
+            Log.e(TAG, "Certificates exported to " + csvFile.getAbsolutePath()); // Add this log statement
+            Toast.makeText(this, "Certificates exported to " + csvFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Failed to export certificates", e); // Add this log statement
+            Toast.makeText(this, "Failed to export certificates", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            Uri selectedFileUri = data.getData();
+            if (selectedFileUri != null) {
+                try {
+                    importStudentsFromCSV(selectedFileUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 }
 
