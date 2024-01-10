@@ -138,29 +138,52 @@ public class StudentManagement extends AppCompatActivity {
                     Intent intent = new Intent(this, AddNewStudent.class);
                     startActivity(intent);
                 } else {
-                    // If the user doesn't have the required role, show a message or take appropriate action
                     Toast.makeText(StudentManagement.this, "You do not have the required role to add a student", Toast.LENGTH_SHORT).show();
                 }
             });
         });
 
         btnAddStudentFromCSV.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("text/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(intent, 1);
+            UserManagement.getCurrentRole(currentRole -> {
+                if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("text/*");
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    startActivityForResult(intent, 1);
+                } else {
+                    Toast.makeText(StudentManagement.this, "You do not have the required role to do this", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         btnExportStudentToCSV.setOnClickListener(view -> {
-            exportStudentListToCSV();
+            UserManagement.getCurrentRole(currentRole -> {
+                if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                    exportStudentListToCSV();
+                } else {
+                    Toast.makeText(StudentManagement.this, "You do not have the required role to do this", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         btnAddCertificateFromCSV.setOnClickListener(view -> {
-            showChooseStudentDialog(true);
+            UserManagement.getCurrentRole(currentRole -> {
+                if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                    showChooseStudentDialog(true);
+                } else {
+                    Toast.makeText(StudentManagement.this, "You do not have the required role to do this", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         btnExportCertificateToCSV.setOnClickListener(view -> {
-            showChooseStudentDialog(false);
+            UserManagement.getCurrentRole(currentRole -> {
+                if ("Admin".equals(currentRole) || "Manager".equals(currentRole)) {
+                    showChooseStudentDialog(false);
+                } else {
+                    Toast.makeText(StudentManagement.this, "You do not have the required role to do this", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 
