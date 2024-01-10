@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class StudentManagement extends AppCompatActivity {
     private LinearLayout btnStudentList, btnAddStudent, btnAddStudentFromCSV, item_user,
             btnExportStudentToCSV, btnAddCertificateFromCSV, btnExportCertificateToCSV;
     private ArrayList<Student> studentList = new ArrayList<>();
+    private int selectedPosition;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +74,6 @@ public class StudentManagement extends AppCompatActivity {
         btnExportCertificateToCSV = findViewById(R.id.btnExportCertificateToCSV);
 
         AdapterStudent studentAdapter = new AdapterStudent(this, new ArrayList<>());
-
         fetchAndDisplayUserInfo();
         studentRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -96,11 +97,7 @@ public class StudentManagement extends AppCompatActivity {
 
                     studentList.add(student);
                 }
-
-                // Log the size of the studentList
                 Log.e(TAG, "Number of students: " + studentList.size());
-
-                // Update the list in your adapter
                 studentAdapter.setStudentList(studentList);
             }
 
@@ -110,9 +107,6 @@ public class StudentManagement extends AppCompatActivity {
                 Log.e(TAG, "Database error: " + error.getMessage());
             }
         });
-
-
-
 
         profileBtn.setOnClickListener(view -> {
             Intent intent = new Intent(this, ProfileUser.class);
@@ -181,6 +175,7 @@ public class StudentManagement extends AppCompatActivity {
                     displayUserInList(user);
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle error if needed
@@ -244,12 +239,10 @@ public class StudentManagement extends AppCompatActivity {
         boolean isFirstLine = true; // Flag to skip the first line (header)
 
         while ((line = reader.readLine()) != null) {
-            // Skip the first line (header)
             if (isFirstLine) {
                 isFirstLine = false;
                 continue;
             }
-
             // Split the CSV line into fields
             String[] fields = line.split(",");
 
@@ -269,21 +262,15 @@ public class StudentManagement extends AppCompatActivity {
                     }
                 }
 
-                // Create a new student and add it to the database
                 Student student = new Student(null, id, name, birth, gender, certificates);
                 addNewStudentToDatabase(student);
                 importedStudentCount++;
             }
         }
-
-        // Close the reader
         reader.close();
-
-        // Show a Toast message indicating the import result
         String toastMessage = (importedStudentCount > 0) ?
                 "Successfully imported " + importedStudentCount + " students" :
                 "No students imported";
-
         Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
     }
 
@@ -338,8 +325,8 @@ public class StudentManagement extends AppCompatActivity {
 
     private void showChooseStudentDialog(boolean isImport) {
         List<String> studentNames = new ArrayList<>();
-        for (Student student : studentList) {
-            studentNames.add(student.getName());
+        for (int i = 0; i < studentList.size(); i++) {
+            studentNames.add(studentList.get(i).getName());
         }
 
         CharSequence[] items = studentNames.toArray(new CharSequence[0]);
@@ -348,31 +335,81 @@ public class StudentManagement extends AppCompatActivity {
         builder.setTitle("Choose a student");
 
         builder.setItems(items, (dialog, item) -> {
-            Student selectedStudent = studentList.get(item);
-
-            if (isImport) {
-                // Open file picker to import certificates for the selected student
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("text/*");
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, 2); // Use a different requestCode for certificates
-            } else {
-                // Export certificates for the selected student
-                exportCertificatesToCSV(selectedStudent);
-            }
+            // Pass both the selected student and its position to the handling method
+            handleSelectedStudent(studentList.get(item), item, isImport);
         });
 
         builder.show();
     }
 
-    private void importCertificatesFromCSV(Student student, Uri fileUri) throws IOException {
-        // Read the content of the CSV file and import certificates for the selected student
-        // Use the student object to identify which student to update
-        // ...
+    private void handleSelectedStudent(Student selectedStudent, int position, boolean isImport) {
+        // Store the selected position in the class variable
+        selectedPosition = position;
 
-        // Show a Toast message indicating the import result
-        String toastMessage = "Successfully imported certificates for " + student.getName();
+        if (isImport) {
+            // Open file picker to import certificates for the selected student
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("text/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, 2); // Use a different requestCode for certificates
+        } else {
+            exportCertificatesToCSV(selectedStudent);
+        }
+    }
+
+    private void importCertificatesFromCSV(Student student, Uri fileUri) throws IOException {
+        student.getCertificates().clear();
+
+        // Read the content of the CSV file
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(fileUri)));
+        String line;
+        int importedCertificateCount = 0;
+        boolean isFirstLine = true; // Flag to skip the first line (header)
+
+        while ((line = reader.readLine()) != null) {
+            // Skip the first line (header)
+            if (isFirstLine) {
+                isFirstLine = false;
+                continue;
+            }
+
+            // Assuming the CSV format is: Certificate
+            String certificateName = line.trim();
+
+            // Assuming you have a Certificate object created while reading from CSV
+            Certificate certificate = new Certificate(certificateName);
+            Student selectedStudent = studentList.get(selectedPosition);
+            addNewCertificateToDatabase(selectedStudent, certificate);
+            importedCertificateCount++;
+
+            // Log the imported certificate
+            Log.e(TAG, "Imported certificate for " + student.getName() + ": " + certificateName);
+        }
+        reader.close();
+        String toastMessage = (importedCertificateCount > 0) ?
+                "Successfully imported " + importedCertificateCount + " certificates for " + student.getName() :
+                "No certificates imported";
         Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void addNewCertificateToDatabase(Student student, Certificate certificate) {
+        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference().child("students").child(student.getKey()).child("Certificates");
+        Log.e(TAG, "studentRef " + studentRef);
+
+        // Create a map with field names matching your certificate data structure
+        Map<String, Object> certificateData = new HashMap<>();
+        certificateData.put("name", certificate.getName());
+
+        // Add the new certificate to the "Certificates" node under the student in the database
+        studentRef.push().setValue(certificateData)
+                .addOnSuccessListener(aVoid -> {
+                    // Handle success
+                    Log.d("AddNewCertificate", "New certificate added to database successfully");
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("AddNewCertificate", "Error adding new certificate to database", e);
+                });
     }
 
     private void exportCertificatesToCSV(Student student) {
@@ -407,7 +444,6 @@ public class StudentManagement extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -419,6 +455,17 @@ public class StudentManagement extends AppCompatActivity {
                     importStudentsFromCSV(selectedFileUri);
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+        } else if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
+            Uri selectedCertificateFileUri = data.getData();
+            if (selectedCertificateFileUri != null) {
+                // Use the stored position variable
+                int studentPosition = selectedPosition;
+                try {
+                    importCertificatesFromCSV(studentList.get(studentPosition), selectedCertificateFileUri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
