@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
         Intent intent = new Intent(MainActivity.this, ProfileUserEdit.class);
         intent.putExtra("userId", selectedUser.getUid());
         Log.e("TAG", "selectedUser id " + selectedUser.getUid());
-
         startActivity(intent);
     }
 
@@ -156,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
                 // Handle the query submission if needed
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d("SearchQuery", "Query: " + newText);
@@ -165,7 +163,4 @@ public class MainActivity extends AppCompatActivity implements AdapterUser.OnIte
             }
         });
     }
-
-
-
 }

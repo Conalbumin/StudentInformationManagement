@@ -47,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileUser extends AppCompatActivity {
     private static final int SELECT_FILE = 1;
     private FirebaseAuth auth;
-    private FirebaseUser user;
+    private static final String DEFAULT_AVATAR_PATH = "android.resource://your_package_name/drawable/profile.jpg";
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private CircleImageView avatar;
@@ -81,6 +81,7 @@ public class ProfileUser extends AppCompatActivity {
         profileBtn = findViewById(R.id.profileBtn);
 
         getInfoUser(); // Fetch and display user information
+
 
         logout_layout.setOnClickListener(view -> {
             auth.signOut();
@@ -182,6 +183,8 @@ public class ProfileUser extends AppCompatActivity {
 
                         // Call the updateUI method with the obtained information
                         updateUI(name, age, phone, role);
+                        loadProfileImage(userId);
+
                     }
                 }
 
@@ -347,6 +350,7 @@ public class ProfileUser extends AppCompatActivity {
                     .addOnFailureListener(e -> {
                         progressDialog.dismiss();
                         Toast.makeText(ProfileUser.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("Avatar Click", "Upload failed: " + e.getMessage());
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -357,15 +361,21 @@ public class ProfileUser extends AppCompatActivity {
                     });
         }
     }
+
     private void loadProfileImage(String userId) {
-        StorageReference profileImageRef = storageReference.child("profile_images/" + userId + "/profile_picture.jpg");
-        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            // Load the image using the URL (e.g., with Glide or Picasso)
+        String userProfileImagePath = "profile_images/" + userId + "/profile_picture.jpg";
+        StorageReference userProfileImageRef = storageReference.child(userProfileImagePath);
+        Log.e("userProfileImageRef", "userProfileImageRef "+ userProfileImageRef);
+        // Try to get the download URL for the user's profile image
+        userProfileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            // Load the user's profile image if it exists
             Glide.with(ProfileUser.this).load(uri.toString()).into(avatar);
         }).addOnFailureListener(e -> {
-            // Handle failure
+            // If the user's profile image doesn't exist, load the default profile image
+            Glide.with(ProfileUser.this).load(Uri.parse(DEFAULT_AVATAR_PATH)).into(avatar);
         });
     }
+
     private void updateUserProfileImageUrl(String imageUrl) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -378,6 +388,9 @@ public class ProfileUser extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.e("Firebase Update", "User profile image URL updated successfully.");
 
+                            // Load and display the updated profile image
+                            loadProfileImage(userId);
+
                             // Now, you need to fetch the updated user information
                             FirebaseUser updatedUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -385,9 +398,6 @@ public class ProfileUser extends AppCompatActivity {
                                 // Get the updated display name and photo URL
                                 String updatedDisplayName = updatedUser.getDisplayName();
                                 Uri updatedPhotoUrl = updatedUser.getPhotoUrl();
-
-                                // Load and display the updated profile image
-                                loadProfileImage(userId);
 
                                 // Proceed with other updates or refreshing the UI
                                 getInfoUser();
@@ -399,6 +409,7 @@ public class ProfileUser extends AppCompatActivity {
                     });
         }
     }
+
 
 }
 
